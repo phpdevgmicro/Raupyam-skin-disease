@@ -155,13 +155,14 @@ export default function SkinAnalysis() {
                 <CardContent className="space-y-6">
                   <ImageUpload onImagesChange={setImages} />
                   
+                  {/* Start Analysis button */}
                   {images.length > 0 && (
                     <div className="pt-6 border-t flex justify-end">
                       <Button
                         size="lg"
                         onClick={handleStartAnalysis}
                         data-testid="button-start-analysis"
-                        className="gap-2"
+                        className="gap-2 h-12"
                       >
                         <Sparkles className="w-5 h-5" />
                         Start AI Analysis
@@ -190,7 +191,7 @@ export default function SkinAnalysis() {
                   size="lg"
                   onClick={handleStartOver}
                   data-testid="button-start-over"
-                  className="bg-[#353535] hover:bg-[#252525] text-white font-medium px-12 transition-colors duration-200"
+                  className="bg-[#353535] hover:bg-[#252525] text-white font-medium px-12 h-12 transition-colors duration-200"
                 >
                   Start New Analysis
                 </Button>

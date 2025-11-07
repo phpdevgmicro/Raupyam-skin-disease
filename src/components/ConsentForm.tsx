@@ -34,9 +34,13 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   const addressInputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [addressSelected, setAddressSelected] = useState(false);
-  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
-  const [lastSubmittedAddress, setLastSubmittedAddress] = useState<string>("");
+  const [addressSelected, setAddressSelected] = useState(!!initialData?.address);
+  const [coordinates, setCoordinates] = useState<Coordinates | null>(
+    (initialData as any)?.coordinates || null
+  );
+  const [lastSubmittedAddress, setLastSubmittedAddress] = useState<string>(
+    initialData?.address || ""
+  );
   const { toast } = useToast();
 
   const form = useForm<ConsentFormData>({
@@ -296,8 +300,14 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         data-testid="input-city"
                         autoComplete="off"
                         {...field}
-                        readOnly={!addressSelected || field.value !== ""}
-                        className={!addressSelected || field.value !== "" ? "bg-muted" : ""}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (field.value === "" || !addressSelected) {
+                            setAddressSelected(false);
+                          }
+                        }}
+                        readOnly={field.value !== "" && addressSelected}
+                        className={field.value !== "" && addressSelected ? "bg-muted" : ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -317,8 +327,14 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         data-testid="input-state"
                         autoComplete="off"
                         {...field}
-                        readOnly={!addressSelected || field.value !== ""}
-                        className={!addressSelected || field.value !== "" ? "bg-muted" : ""}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (field.value === "" || !addressSelected) {
+                            setAddressSelected(false);
+                          }
+                        }}
+                        readOnly={field.value !== "" && addressSelected}
+                        className={field.value !== "" && addressSelected ? "bg-muted" : ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -338,8 +354,14 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         data-testid="input-country"
                         autoComplete="off"
                         {...field}
-                        readOnly={!addressSelected || field.value !== ""}
-                        className={!addressSelected || field.value !== "" ? "bg-muted" : ""}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (field.value === "" || !addressSelected) {
+                            setAddressSelected(false);
+                          }
+                        }}
+                        readOnly={field.value !== "" && addressSelected}
+                        className={field.value !== "" && addressSelected ? "bg-muted" : ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -347,28 +369,29 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 )}
               />
             </div>
-
-            <div className="pt-4">
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full md:w-auto px-8"
-                data-testid="button-submit-consent"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Continue to Image Upload"
-                )}
-              </Button>
-            </div>
           </form>
         </Form>
       </CardContent>
+
+      <div className="px-6 pb-6">
+        <Button
+          type="submit"
+          onClick={form.handleSubmit(handleFormSubmit)}
+          size="lg"
+          className="px-8 h-12"
+          data-testid="button-submit-consent"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            "Continue to Image Upload"
+          )}
+        </Button>
+      </div>
     </Card>
   );
 }

@@ -101,27 +101,29 @@ export default function FeedbackForm() {
                 </FormItem>
               )}
             />
-
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                className="px-6"
-                data-testid="button-submit-feedback"
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit Feedback"
-                )}
-              </Button>
-            </div>
           </form>
         </Form>
       </CardContent>
+
+      {/* Submit button */}
+      <div className="flex justify-end px-6 pb-6">
+        <Button
+          type="submit"
+          onClick={form.handleSubmit(onSubmit)}
+          className="px-6 h-12"
+          data-testid="button-submit-feedback"
+          disabled={isPending}
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            "Submit Feedback"
+          )}
+        </Button>
+      </div>
     </Card>
   );
 }

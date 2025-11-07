@@ -38,7 +38,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+        <div className="relative w-full h-[60vh] md:h-[70vh] rounded-lg overflow-hidden bg-muted">
           <Webcam
             ref={webcamRef}
             audio={false}

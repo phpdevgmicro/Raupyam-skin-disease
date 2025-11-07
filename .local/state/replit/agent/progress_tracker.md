@@ -2,6 +2,7 @@
 [x] 2. Restart the workflow to see if the project is working
 [x] 3. Verify the project is working using the feedback tool
 [x] 4. Inform user the import is completed and they can start building, mark the import as completed using the complete_project_import tool
+[x] 5. Complete migration from Replit Agent to Replit environment (Nov 7, 2025)
 [x] 5. Implement session storage system for patient data and air quality
 [x] 6. Integrate Google Geocoding and Air Quality APIs
 [x] 7. Update consent form to geocode addresses and trigger background air quality calls
@@ -77,3 +78,17 @@
 [x] 77. Verify geocoding failures use toast notifications instead of alert popups
 [x] 78. Remove 'Important Disclaimer' section from analysis results page
 [x] 79. Add loading state with spinner to feedback submission button
+[x] 80. Fix "location not found" alert showing on form re-submission without changes
+[x] 81. Initialize coordinates and lastSubmittedAddress from initialData when navigating back
+[x] 82. Update alert logic to only show when address has actually changed
+[x] 83. Test and verify fix: re-submitting form without changes no longer shows alert
+[x] 84. Restart workflow and confirm application is running successfully
+[x] 85. Fix address field readonly logic - make city, state, country editable when address selected but not auto-filled (Nov 7, 2025)
+[x] 86. Improve ImageUpload UX - hide option cards when image uploaded, show only image preview (Nov 7, 2025)
+[x] 87. Add persistent "Remove" button for mobile users to clear image and return to options (Nov 7, 2025)
+[x] 88. Add sticky bottom buttons with 48px touch targets for mobile usability (Nov 7, 2025)
+[x] 89. ConsentForm - sticky "Continue to Image Upload" button on mobile (Nov 7, 2025)
+[x] 90. Image Upload - sticky "Start AI Analysis" button on mobile when image present (Nov 7, 2025)
+[x] 91. FeedbackForm - sticky "Submit Feedback" button on mobile (Nov 7, 2025)
+[x] 92. Results page - sticky "Start New Analysis" button on mobile (Nov 7, 2025)
+[x] 93. Test and verify all mobile improvements work correctly (Nov 7, 2025)
