@@ -15,10 +15,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 export default function FeedbackForm() {
   const { toast } = useToast();
+  const [isPending, setIsPending] = useState(false);
   const form = useForm<FeedbackFormData>({
     resolver: zodResolver(feedbackFormSchema),
     defaultValues: {
@@ -28,11 +30,13 @@ export default function FeedbackForm() {
   });
 
   const onSubmit = async (data: FeedbackFormData) => {
+    setIsPending(true);
     try {
       await submitFeedback(data.suggestion, data.email);
       toast({
         title: "Feedback submitted",
         description: "Thank you for your feedback. We'll get back to you soon.",
+        duration: 5000,
       });
       form.reset();
     } catch (error) {
@@ -41,6 +45,8 @@ export default function FeedbackForm() {
         description: "There was an error submitting your feedback. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsPending(false);
     }
   };
 
@@ -101,8 +107,16 @@ export default function FeedbackForm() {
                 type="submit"
                 className="px-6"
                 data-testid="button-submit-feedback"
+                disabled={isPending}
               >
-                Submit Feedback
+                {isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit Feedback"
+                )}
               </Button>
             </div>
           </form>

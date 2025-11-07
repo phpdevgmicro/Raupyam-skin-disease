@@ -36,6 +36,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addressSelected, setAddressSelected] = useState(false);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
+  const [lastSubmittedAddress, setLastSubmittedAddress] = useState<string>("");
   const { toast } = useToast();
 
   const form = useForm<ConsentFormData>({
@@ -119,13 +120,15 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             console.error('Failed to save air quality data in background:', error);
           }
         });
-      } else {
+      } else if (data.address !== lastSubmittedAddress) {
         toast({
           title: "Location not found",
           description: "We couldn't get coordinates for your address, but you can still proceed.",
+          duration: 5000,
         });
       }
 
+      setLastSubmittedAddress(data.address);
       onSubmit(patientData as ConsentFormData);
     } catch (error) {
       console.error('Form submission error:', error);
@@ -168,6 +171,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       <Input
                         placeholder="John Doe"
                         data-testid="input-fullname"
+                        autoComplete="off"
                         {...field}
                       />
                     </FormControl>
@@ -187,6 +191,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         type="number"
                         placeholder="25"
                         data-testid="input-age"
+                        autoComplete="off"
                         {...field}
                       />
                     </FormControl>
@@ -268,6 +273,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     <Input
                       placeholder="Start typing your address..."
                       data-testid="input-address"
+                      autoComplete="off"
                       {...field}
                       ref={addressInputRef}
                     />
@@ -288,6 +294,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       <Input
                         placeholder="Enter city"
                         data-testid="input-city"
+                        autoComplete="off"
                         {...field}
                         readOnly={!addressSelected || field.value !== ""}
                         className={!addressSelected || field.value !== "" ? "bg-muted" : ""}
@@ -308,6 +315,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       <Input
                         placeholder="Enter state"
                         data-testid="input-state"
+                        autoComplete="off"
                         {...field}
                         readOnly={!addressSelected || field.value !== ""}
                         className={!addressSelected || field.value !== "" ? "bg-muted" : ""}
@@ -328,6 +336,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       <Input
                         placeholder="Enter country"
                         data-testid="input-country"
+                        autoComplete="off"
                         {...field}
                         readOnly={!addressSelected || field.value !== ""}
                         className={!addressSelected || field.value !== "" ? "bg-muted" : ""}

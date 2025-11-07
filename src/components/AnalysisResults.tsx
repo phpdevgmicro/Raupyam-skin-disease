@@ -48,24 +48,13 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
   return (
     <Card data-testid="card-analysis-results">
       <CardHeader>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex-1">
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              AI Analysis Results
-            </CardTitle>
-            <CardDescription className="mt-2">
-              Based on the images and information you provided
-            </CardDescription>
-          </div>
-          <Badge 
-            variant="outline" 
-            className={`${config.bgColor} ${config.color} ${config.borderColor} border px-3 py-1.5 text-sm font-medium`}
-          >
-            <SeverityIcon className="w-4 h-4 mr-1.5" />
-            {config.label}
-          </Badge>
-        </div>
+        <CardTitle className="text-2xl flex items-center gap-2">
+          <Sparkles className="w-6 h-6 text-primary" />
+          AI Analysis Results
+        </CardTitle>
+        <CardDescription className="mt-2">
+          Based on the images and information you provided
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
         <div>
@@ -104,22 +93,6 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
             </div>
           </div>
         )}
-
-        <div className="pt-4">
-          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-            <div className="flex gap-3">
-              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-amber-900 dark:text-amber-100 mb-1">
-                  Important Disclaimer
-                </p>
-                <p className="text-sm text-amber-800 dark:text-amber-200">
-                  This analysis is AI-generated and should not replace professional medical advice. Please consult with a qualified dermatologist for proper diagnosis and treatment.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
