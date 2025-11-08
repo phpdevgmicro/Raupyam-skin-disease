@@ -19,8 +19,8 @@ type Step = "consent" | "upload" | "loading" | "results";
 const stepMapping: Record<Step, number> = {
   consent: 1,
   upload: 2,
-  loading: 3,
-  results: 4,
+  loading: 2,
+  results: 3,
 };
 
 export default function SkinAnalysis() {
@@ -102,10 +102,16 @@ export default function SkinAnalysis() {
       <Header />
       
       <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="text-center mb-6 md:mb-8">
+          <h2 className="text-xl md:text-2xl font-semibold text-foreground">
+            Unlock Your Skin's Hidden Superpowers ✨
+          </h2>
+        </div>
+
         {step !== "loading" && (
           <ProgressSteps
             currentStep={stepMapping[step]}
-            steps={['Consent Form', 'Upload Images', 'Analysis', 'Results']}
+            steps={['Quick Profile', 'Upload Image', 'Results']}
           />
         )}
 
@@ -114,9 +120,8 @@ export default function SkinAnalysis() {
             <div className="max-w-2xl mx-auto animate-in fade-in duration-300">
 
               <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold mb-2">Welcome to Skin Analysis</h2>
-                <p className="text-muted-foreground">
-                  Let's start by collecting some basic information about you
+                <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                  In 60 seconds, we'll whip up a custom elixir tuned to <span className="font-medium">*your*</span> world—whether it's NYC's urban grit or Paris's crisp chill. (We tap your city's air, water, and rays for ninja-level protection.) Ready to outglow your everyday?
                 </p>
               </div>
               <ConsentForm onSubmit={handleConsentSubmit} initialData={consentData} />

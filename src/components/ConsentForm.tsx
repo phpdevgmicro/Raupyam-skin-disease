@@ -19,8 +19,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useEffect, useRef, useState } from "react";
-import { MapPin, Loader2 } from "lucide-react";
+import { MapPin, Loader2, Info, Droplets, Wind, Sparkles, Heart, Zap } from "lucide-react";
 import { fetchAirQualityInBackground, type Coordinates } from "@/lib/googleApis";
 import { sessionStorage } from "@/lib/sessionStorage";
 import { useToast } from "@/hooks/use-toast";
@@ -50,6 +52,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       age: 0,
       gender: undefined,
       skinType: undefined,
+      topConcern: [],
       address: "",
       city: "",
       state: "",
@@ -156,26 +159,27 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   return (
     <Card className="bg-[#f8f8f8] dark:bg-gray-900/50">
       <CardHeader>
-        <CardTitle className="text-xl">Patient Information</CardTitle>
-        <CardDescription>
-          Please provide your information before proceeding with the skin analysis. All information is kept confidential.
+        <CardTitle className="text-2xl">Your Skin Story Starter</CardTitle>
+        <CardDescription className="text-base">
+          Tell us a bit about yourself so we can customize your skin analysis. All information is kept confidential.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name *</FormLabel>
+                    <FormLabel className="text-base">What's the name behind that glow? 👋</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="John Doe"
+                        placeholder="Alex Rivera"
                         data-testid="input-fullname"
                         autoComplete="off"
+                        className="min-h-11 text-base"
                         {...field}
                       />
                     </FormControl>
@@ -189,13 +193,24 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="age"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Age *</FormLabel>
+                    <FormLabel className="flex items-center gap-2 text-base">
+                      How many trips around the sun? 🌞
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>This lets us tweak for your vibe—antioxidants for 20s pollution fighters, peptides for 40+ firmness.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         placeholder="25"
                         data-testid="input-age"
                         autoComplete="off"
+                        className="min-h-11 text-base"
                         {...field}
                       />
                     </FormControl>
@@ -205,71 +220,157 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Gender *</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      data-testid="select-gender"
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select gender" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                        <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-base">
+                    Your vibe? (We keep it light—no judgments.) 💫
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>Hormones play a role—e.g., oil control for testosterone-driven 20s guys, hydration heroes for estrogen dips in women.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    data-testid="select-gender"
+                  >
+                    <FormControl>
+                      <SelectTrigger className="min-h-11 text-base">
+                        <SelectValue placeholder="Select your vibe" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="non-binary">Non-Binary</SelectItem>
+                      <SelectItem value="prefer-not-to-say">Prefer Not to Say</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="skinType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Skin Type *</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      data-testid="select-skintype"
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select skin type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="oily">Oily</SelectItem>
-                        <SelectItem value="dry">Dry</SelectItem>
-                        <SelectItem value="combination">Combination</SelectItem>
-                        <SelectItem value="sensitive">Sensitive</SelectItem>
-                        <SelectItem value="normal">Normal</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="skinType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-base">
+                    Your skin's mood today? (Flaky rebel or oily adventurer?) 🧴
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>This fine-tunes emulsions—e.g., lightweight gels for oily types in humid climate.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
+                  <FormControl>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                      {[
+                        { value: 'oily', label: 'Oily', icon: Droplets },
+                        { value: 'dry', label: 'Dry', icon: Wind },
+                        { value: 'combination', label: 'Combo', icon: Sparkles },
+                        { value: 'sensitive', label: 'Sensitive', icon: Heart },
+                        { value: 'normal', label: 'Normal', icon: Zap },
+                      ].map((type) => {
+                        const Icon = type.icon;
+                        const isSelected = field.value === type.value;
+                        
+                        return (
+                          <Button
+                            key={type.value}
+                            type="button"
+                            variant={isSelected ? "default" : "outline"}
+                            className="min-h-[80px] flex flex-col items-center justify-center gap-2 px-2 py-3"
+                            onClick={() => field.onChange(type.value)}
+                            data-testid={`button-skintype-${type.value}`}
+                          >
+                            <Icon className="w-6 h-6" />
+                            <span className="text-xs sm:text-sm">{type.label}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="topConcern"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-base">
+                    What's bugging your glow most? (Pick 1-2—we've got fixes.) 🔥
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>Zeroes in on heroes like bakuchiol for lines or niacinamide for redness, synced to your water quality.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
+                  <FormControl>
+                    <div className="flex flex-wrap gap-3">
+                      {(['acne', 'fine-lines', 'dullness', 'redness', 'other'] as const).map((concern) => {
+                        const isSelected = field.value?.includes(concern);
+                        const isDisabled = !isSelected && (field.value?.length ?? 0) >= 2;
+                        const concernLabels = {
+                          'acne': 'Acne',
+                          'fine-lines': 'Fine Lines',
+                          'dullness': 'Dullness',
+                          'redness': 'Redness',
+                          'other': 'Other'
+                        };
+                        
+                        return (
+                          <Button
+                            key={concern}
+                            type="button"
+                            variant={isSelected ? "default" : "outline"}
+                            size="lg"
+                            className="rounded-full min-h-11 px-6 text-base"
+                            disabled={isDisabled}
+                            onClick={() => {
+                              const currentValues = field.value || [];
+                              if (isSelected) {
+                                field.onChange(currentValues.filter((v: string) => v !== concern));
+                              } else if (currentValues.length < 2) {
+                                field.onChange([...currentValues, concern]);
+                              }
+                            }}
+                            data-testid={`badge-concern-${concern}`}
+                          >
+                            {concernLabels[concern]}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2">
+                  <FormLabel className="flex items-center gap-2 text-base">
                     <MapPin className="w-4 h-4" />
                     Address *
                   </FormLabel>
@@ -278,6 +379,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       placeholder="Start typing your address..."
                       data-testid="input-address"
                       autoComplete="off"
+                      className="min-h-11 text-base"
                       {...field}
                       ref={addressInputRef}
                     />
@@ -293,7 +395,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City *</FormLabel>
+                    <FormLabel className="text-base">City *</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter city"
@@ -307,7 +409,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           }
                         }}
                         readOnly={field.value !== "" && addressSelected}
-                        className={field.value !== "" && addressSelected ? "bg-muted" : ""}
+                        className={`min-h-11 text-base ${field.value !== "" && addressSelected ? "bg-muted" : ""}`}
                       />
                     </FormControl>
                     <FormMessage />
@@ -320,7 +422,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="state"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>State *</FormLabel>
+                    <FormLabel className="text-base">State *</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter state"
@@ -334,7 +436,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           }
                         }}
                         readOnly={field.value !== "" && addressSelected}
-                        className={field.value !== "" && addressSelected ? "bg-muted" : ""}
+                        className={`min-h-11 text-base ${field.value !== "" && addressSelected ? "bg-muted" : ""}`}
                       />
                     </FormControl>
                     <FormMessage />
@@ -347,7 +449,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Country *</FormLabel>
+                    <FormLabel className="text-base">Country *</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter country"
@@ -361,7 +463,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           }
                         }}
                         readOnly={field.value !== "" && addressSelected}
-                        className={field.value !== "" && addressSelected ? "bg-muted" : ""}
+                        className={`min-h-11 text-base ${field.value !== "" && addressSelected ? "bg-muted" : ""}`}
                       />
                     </FormControl>
                     <FormMessage />
