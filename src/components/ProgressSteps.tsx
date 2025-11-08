@@ -3,9 +3,10 @@ import { Check } from "lucide-react";
 interface ProgressStepsProps {
   currentStep: number;
   steps: string[];
+  onStepClick?: (stepNumber: number) => void;
 }
 
-export default function ProgressSteps({ currentStep, steps }: ProgressStepsProps) {
+export default function ProgressSteps({ currentStep, steps, onStepClick }: ProgressStepsProps) {
   return (
     <div className="w-full flex justify-center mb-8 md:mb-12 px-4">
       <div className="w-full max-w-3xl">
@@ -14,6 +15,7 @@ export default function ProgressSteps({ currentStep, steps }: ProgressStepsProps
             const stepNumber = index + 1;
             const isActive = currentStep === stepNumber;
             const isCompleted = currentStep > stepNumber;
+            const isClickable = isCompleted && onStepClick;
 
             return (
               <div key={index} className="flex items-start" style={{ flex: index < steps.length - 1 ? '1' : '0 0 auto' }}>
@@ -25,7 +27,8 @@ export default function ProgressSteps({ currentStep, steps }: ProgressStepsProps
                         : isActive
                         ? "border-primary text-primary bg-primary/10 ring-2 ring-primary/20 ring-offset-2"
                         : "border-gray-300 dark:border-gray-600 text-muted-foreground"
-                    }`}
+                    } ${isClickable ? "cursor-pointer hover-elevate" : ""}`}
+                    onClick={() => isClickable && onStepClick(stepNumber)}
                     data-testid={`step-${stepNumber}`}
                   >
                     {isCompleted ? (

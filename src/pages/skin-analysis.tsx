@@ -112,6 +112,13 @@ export default function SkinAnalysis() {
           <ProgressSteps
             currentStep={stepMapping[step]}
             steps={['Quick Profile', 'Upload Image', 'Results']}
+            onStepClick={(stepNumber) => {
+              if (stepNumber === 1 && step !== "consent") {
+                transitionToStep("consent");
+              } else if (stepNumber === 2 && step === "results") {
+                transitionToStep("upload");
+              }
+            }}
           />
         )}
 
@@ -138,44 +145,10 @@ export default function SkinAnalysis() {
                 </p>
               </div>
 
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-4">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleBackToConsent}
-                      data-testid="button-back-to-consent"
-                    >
-                      <ArrowLeft className="w-5 h-5" />
-                    </Button>
-                    <div className="flex-1">
-                      <CardTitle>Image Upload</CardTitle>
-                      <CardDescription>
-                        Choose one image from your device or take a photo with your camera
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <ImageUpload onImagesChange={setImages} />
-                  
-                  {/* Start Analysis button */}
-                  {images.length > 0 && (
-                    <div className="pt-6 border-t flex justify-end">
-                      <Button
-                        size="lg"
-                        onClick={handleStartAnalysis}
-                        data-testid="button-start-analysis"
-                        className="gap-2 h-12"
-                      >
-                        <Sparkles className="w-5 h-5" />
-                        Start AI Analysis
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              <ImageUpload 
+                onImagesChange={setImages}
+                onStartAnalysis={images.length > 0 ? handleStartAnalysis : undefined}
+              />
             </div>
           )}
 

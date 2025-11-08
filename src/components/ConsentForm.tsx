@@ -160,9 +160,6 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     <Card className="bg-[#f8f8f8] dark:bg-gray-900/50">
       <CardHeader>
         <CardTitle className="text-2xl">Your Skin Story Starter</CardTitle>
-        <CardDescription className="text-base">
-          Tell us a bit about yourself so we can customize your skin analysis. All information is kept confidential.
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

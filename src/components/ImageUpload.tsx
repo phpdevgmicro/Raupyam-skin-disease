@@ -1,14 +1,15 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Upload, Camera, X, ImagePlus } from "lucide-react";
+import { Upload, Camera, X, ImagePlus, Sparkles } from "lucide-react";
 import CameraCapture from "./CameraCapture";
 
 interface ImageUploadProps {
   onImagesChange: (images: string[]) => void;
+  onStartAnalysis?: () => void;
 }
 
-export default function ImageUpload({ onImagesChange }: ImageUploadProps) {
+export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUploadProps) {
   const [image, setImage] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -99,56 +100,54 @@ export default function ImageUpload({ onImagesChange }: ImageUploadProps) {
           </Card>
         </div>
       ) : (
-        <div>
-          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <ImagePlus className="w-5 h-5 text-primary" />
-              Uploaded Image
-            </h3>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                data-testid="button-change-image"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Change Image
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={removeImage}
-                data-testid="button-remove-image-mobile"
-                className="md:hidden"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Remove
-              </Button>
-            </div>
-          </div>
-          <div className="max-w-md mx-auto">
-            <div
-              className="relative group aspect-square rounded-lg overflow-hidden border-2 border-border"
-              data-testid="image-preview"
-            >
-              <img
-                src={image}
-                alt="Uploaded image"
-                className="w-full h-full object-cover"
-              />
-              {/* Desktop hover remove button */}
-              <div className="hidden md:flex absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors items-center justify-center">
-                <button
-                  onClick={removeImage}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity bg-destructive text-destructive-foreground rounded-full p-2 hover-elevate"
-                  data-testid="button-remove-image"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+        <div className="space-y-4">
+          <Card className="relative overflow-hidden">
+            <CardContent className="p-0">
+              <div className="relative aspect-[4/3] w-full">
+                <img
+                  src={image}
+                  alt="Uploaded image"
+                  className="w-full h-full object-cover"
+                  data-testid="image-preview"
+                />
+                
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="bg-black/60 hover:bg-black/80 text-white rounded-full backdrop-blur-sm"
+                    data-testid="button-change-image"
+                  >
+                    <Upload className="w-5 h-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={removeImage}
+                    className="bg-black/60 hover:bg-black/80 text-white rounded-full backdrop-blur-sm"
+                    data-testid="button-remove-image"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                {onStartAnalysis && (
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <Button
+                      size="lg"
+                      onClick={onStartAnalysis}
+                      className="w-full h-12 bg-[#34a853] hover:bg-[#2d8e47] text-white font-semibold gap-2 shadow-lg"
+                      data-testid="button-start-analysis"
+                    >
+                      <Sparkles className="w-5 h-5" />
+                      Start AI Analysis
+                    </Button>
+                  </div>
+                )}
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>
