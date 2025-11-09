@@ -103,11 +103,11 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
         <div className="space-y-4">
           <Card className="relative overflow-hidden">
             <CardContent className="p-0">
-              <div className="relative w-full max-h-[700px] min-h-[400px]">
+              <div className="relative w-full" style={{ height: 'calc(100vh - 400px)', minHeight: '500px', maxHeight: '800px' }}>
                 <img
                   src={image}
                   alt="Uploaded image"
-                  className="w-full h-full object-contain max-h-[700px]"
+                  className="w-full h-full object-cover rounded-md"
                   data-testid="image-preview"
                 />
                 
@@ -133,11 +133,11 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
                 </div>
 
                 {onStartAnalysis && (
-                  <div className="absolute bottom-6 left-6 right-6">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
                     <Button
                       size="lg"
                       onClick={onStartAnalysis}
-                      className="w-full h-12 bg-[#34a853] hover:bg-[#2d8e47] text-white font-semibold gap-2 shadow-lg"
+                      className="w-full h-14 bg-[#34a853] hover:bg-[#2d8e47] text-white font-semibold gap-2 shadow-lg text-base"
                       data-testid="button-start-analysis"
                     >
                       <Sparkles className="w-5 h-5" />

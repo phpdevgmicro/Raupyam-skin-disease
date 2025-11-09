@@ -6,6 +6,7 @@ const STORAGE_KEYS = {
   AIR_QUALITY: 'skin_analysis_air_quality',
   WEATHER: 'skin_analysis_weather',
   IMAGES: 'skin_analysis_images',
+  AUTO_LOCATION: 'skin_analysis_auto_location',
 } as const;
 
 export interface PatientSessionData extends ConsentFormData {
@@ -37,6 +38,19 @@ export interface WeatherData {
   condition?: string;
   uvIndex?: number;
   timestamp?: string;
+}
+
+export interface AutoDetectedLocation {
+  city: string;
+  state: string;
+  country: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  airQuality: AirQualityData | null;
+  weather: WeatherData | null;
+  detectedAt: string;
 }
 
 export const sessionStorage = {
@@ -74,6 +88,15 @@ export const sessionStorage = {
   getImages(): string[] {
     const data = window.sessionStorage.getItem(STORAGE_KEYS.IMAGES);
     return data ? JSON.parse(data) : [];
+  },
+
+  saveAutoLocation(data: AutoDetectedLocation) {
+    window.sessionStorage.setItem(STORAGE_KEYS.AUTO_LOCATION, JSON.stringify(data));
+  },
+
+  getAutoLocation(): AutoDetectedLocation | null {
+    const data = window.sessionStorage.getItem(STORAGE_KEYS.AUTO_LOCATION);
+    return data ? JSON.parse(data) : null;
   },
 
   clearAll() {

@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/accordion";
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Loader2, Info, Droplets, Wind, Sparkles, Heart, Zap, Sun, Cloud, ArrowRight } from "lucide-react";
-import { fetchEnvironmentalData, type Coordinates, type AirQualityResponse, type WeatherResponse } from "@/lib/googleApis";
+import { fetchEnvironmentalData, detectLocationFromIP, type Coordinates, type AirQualityResponse, type WeatherResponse } from "@/lib/googleApis";
 import { sessionStorage } from "@/lib/sessionStorage";
 import { useToast } from "@/hooks/use-toast";
 
@@ -54,6 +54,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     weather: WeatherResponse | null;
     city: string;
   } | null>(null);
+  const [isAutoDetecting, setIsAutoDetecting] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<ConsentFormData>({
@@ -127,6 +128,84 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       });
     }
   }, [form]);
+
+  useEffect(() => {
+    async function autoDetectLocation() {
+      if (initialData?.city) {
+        return;
+      }
+
+      const savedAutoLocation = sessionStorage.getAutoLocation();
+      
+      if (savedAutoLocation) {
+        const synthesizedAddress = [savedAutoLocation.city, savedAutoLocation.state, savedAutoLocation.country]
+          .filter(Boolean)
+          .join(", ");
+        
+        form.setValue("address", synthesizedAddress, { shouldValidate: false });
+        form.setValue("city", savedAutoLocation.city, { shouldValidate: false });
+        form.setValue("state", savedAutoLocation.state, { shouldValidate: false });
+        form.setValue("country", savedAutoLocation.country, { shouldValidate: false });
+        setCoordinates(savedAutoLocation.coordinates);
+        setAddressSelected(true);
+        setEnvironmentalData({
+          airQuality: savedAutoLocation.airQuality,
+          weather: savedAutoLocation.weather,
+          city: savedAutoLocation.city,
+        });
+        return;
+      }
+
+      setIsAutoDetecting(true);
+      
+      try {
+        const location = await detectLocationFromIP();
+        
+        if (location) {
+          const coords = {
+            lat: location.latitude,
+            lng: location.longitude,
+          };
+          
+          const envData = await fetchEnvironmentalData(coords);
+          
+          const autoLocationData = {
+            city: location.city,
+            state: location.region,
+            country: location.country,
+            coordinates: coords,
+            airQuality: envData.airQuality,
+            weather: envData.weather,
+            detectedAt: new Date().toISOString(),
+          };
+          
+          sessionStorage.saveAutoLocation(autoLocationData);
+          
+          const synthesizedAddress = [location.city, location.region, location.country]
+            .filter(Boolean)
+            .join(", ");
+          
+          form.setValue("address", synthesizedAddress, { shouldValidate: false });
+          form.setValue("city", location.city, { shouldValidate: false });
+          form.setValue("state", location.region, { shouldValidate: false });
+          form.setValue("country", location.country, { shouldValidate: false });
+          setCoordinates(coords);
+          setAddressSelected(true);
+          setEnvironmentalData({
+            airQuality: envData.airQuality,
+            weather: envData.weather,
+            city: location.city,
+          });
+        }
+      } catch (error) {
+        console.error('Auto-detection failed:', error);
+      } finally {
+        setIsAutoDetecting(false);
+      }
+    }
+
+    autoDetectLocation();
+  }, [form, initialData]);
 
   const handleFormSubmit = async (data: ConsentFormData) => {
     setIsSubmitting(true);
@@ -497,46 +576,32 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               />
             </div>
 
-            {/* Environmental Data Display */}
+            {/* Auto-detected Location Message */}
             {environmentalData && environmentalData.city && (
-              <div className="mt-8 p-5 bg-primary/5 border border-primary/20 rounded-lg">
-                <div className="flex items-start gap-3 mb-3">
-                  <MapPin className="w-5 h-5 text-primary mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-base font-medium mb-1">
-                      We grabbed <span className="font-semibold text-primary">{environmentalData.city}</span>!
-                    </p>
-                    <div className="space-y-2 text-sm">
-                      {environmentalData.airQuality?.aqi !== undefined && environmentalData.airQuality?.aqi !== null && (
-                        <div className="flex items-center gap-2">
-                          <Wind className="w-4 h-4 text-muted-foreground" />
-                          <span>
-                            AQI: <span className="font-semibold">{environmentalData.airQuality.aqi}</span> 
-                            {' '}({environmentalData.airQuality.category || 'Good'}) - 
-                            {environmentalData.airQuality.aqi > 150 ? ' Extra anti-pollution shields in your mix.' : ' Clean air protection included.'}
-                          </span>
-                        </div>
-                      )}
-                      {environmentalData.weather?.uvIndex !== undefined && environmentalData.weather?.uvIndex !== null && (
-                        <div className="flex items-center gap-2">
-                          <Sun className="w-4 h-4 text-muted-foreground" />
-                          <span>
-                            UV Index: <span className="font-semibold">{environmentalData.weather.uvIndex}</span> - 
-                            {environmentalData.weather.uvIndex > 7 ? ' Strong protection recommended.' : environmentalData.weather.uvIndex > 3 ? ' Moderate UV care needed.' : ' Minimal UV exposure.'}
-                          </span>
-                        </div>
-                      )}
-                      {environmentalData.weather?.humidity !== undefined && environmentalData.weather?.humidity !== null && (
-                        <div className="flex items-center gap-2">
-                          <Droplets className="w-4 h-4 text-muted-foreground" />
-                          <span>
-                            Humidity: <span className="font-semibold">{environmentalData.weather.humidity}%</span> - 
-                            {environmentalData.weather.humidity > 70 ? ' Lightweight formulas for your climate.' : ' Hydration boost for balanced skin.'}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+              <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-foreground">
+                    <span className="font-semibold">We grabbed {environmentalData.city}</span>
+                    {environmentalData.airQuality?.aqi !== undefined && environmentalData.airQuality?.aqi !== null && (
+                      <>
+                        —its AQI{' '}
+                        <span className="font-semibold">{environmentalData.airQuality.aqi}</span>
+                        {environmentalData.airQuality.category && (
+                          <span> ({environmentalData.airQuality.category})</span>
+                        )}
+                        {' '}means extra anti-pollution shields in your mix.
+                      </>
+                    )}
+                    {environmentalData.weather?.humidity !== undefined && environmentalData.weather?.humidity !== null && (
+                      <>
+                        {' '}
+                        {environmentalData.weather.humidity > 70 
+                          ? "We'll soften formulas to avoid that tight feeling." 
+                          : "Humidity here? We'll balance your routine perfectly."}
+                      </>
+                    )}
+                  </p>
                 </div>
               </div>
             )}
@@ -547,8 +612,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 <AccordionItem value="behind-scenes" className="border-none">
                   <AccordionTrigger className="text-base font-medium hover:no-underline text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
-                      Behind the Scenes: How We Analyze Your World
+                      🌿
+                      Behind the Scenes: How We Make Magic for {environmentalData?.city || 'Your City'}
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="text-sm text-muted-foreground space-y-3 pt-2">
@@ -607,7 +672,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         <div className="text-center text-sm text-muted-foreground italic">
           <span className="inline-flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5" />
-            Did you know? AQI over 150 doubles free radical damage—our antioxidant picks fight back!
+            Fun fact: 92% of globe-trotters like you unlocked brighter vibes in 2 weeks. Your move? (Data's vaulted—promise.)
           </span>
         </div>
       </div>

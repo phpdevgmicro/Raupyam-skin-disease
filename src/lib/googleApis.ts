@@ -95,11 +95,16 @@ export async function fetchWeather(coordinates: Coordinates): Promise<WeatherRes
     const data = await response.json();
     
     return {
-      temperature: data.temperature,
-      humidity: data.humidity,
-      windSpeed: data.windSpeed,
-      condition: data.condition,
-      uvIndex: data.uvIndex,
+      // 🌡️ Climate factors
+      temperature: data.temperature?.degrees,     
+      humidity: data.relativeHumidity,            
+
+      // ☀️ UV and sun exposure
+      uvIndex: data.uvIndex,                     
+      condition: data.weatherCondition?.description?.text, 
+
+      // 🌬️ Air and barrier impact
+      windSpeed: data.wind?.speed?.value,         
     };
   } catch (error) {
     console.error('Error fetching weather:', error);
@@ -138,5 +143,42 @@ export async function fetchEnvironmentalData(coordinates: Coordinates): Promise<
       airQuality: null,
       weather: null,
     };
+  }
+}
+
+export interface IPGeolocationResponse {
+  city: string;
+  region: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  error?: string;
+}
+
+export async function detectLocationFromIP(): Promise<IPGeolocationResponse | null> {
+  try {
+    const response = await fetch('https://ipapi.co/json/');
+    
+    if (!response.ok) {
+      throw new Error('IP geolocation request failed');
+    }
+
+    const data = await response.json();
+    
+    if (data.error) {
+      console.error('IP geolocation error:', data.reason);
+      return null;
+    }
+
+    return {
+      city: data.city || '',
+      region: data.region || '',
+      country: data.country_name || '',
+      latitude: data.latitude,
+      longitude: data.longitude,
+    };
+  } catch (error) {
+    console.error('Error detecting location from IP:', error);
+    return null;
   }
 }

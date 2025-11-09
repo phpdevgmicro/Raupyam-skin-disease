@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import { Button } from "@/components/ui/button";
 import { Camera, X, FlipHorizontal } from "lucide-react";
+import logoUrl from "@assets/logo_1762464998914.png";
 
 interface CameraCaptureProps {
   onCapture: (imageSrc: string) => void;
@@ -37,11 +38,14 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
       />
       
       <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/80 to-transparent">
+        <div className="flex items-center justify-center mb-4">
+          <img src={logoUrl} alt="RAUPYAM" className="h-12" />
+        </div>
         <Button
           variant="ghost"
           size="icon"
           onClick={onClose}
-          className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-12 h-12 z-10"
+          className="absolute top-4 left-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-12 h-12 z-10"
           data-testid="button-close-camera"
         >
           <X className="w-6 h-6" />
