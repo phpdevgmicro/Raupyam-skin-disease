@@ -17,23 +17,13 @@ class OPENAITOOL {
             
             $instruction = $prompt['result']['vision'];
             
-            // Optimize: Build user text more efficiently
-            $userTextParts = [$airQuality];
-            
-            $userFields = [
-                'fullName' => 'Name',
-                'age' => 'Age',
-                'gender' => 'Gender',
-                'skinType' => 'Skin Type'
+            // Build JSON-based user text for better flexibility
+            $jsonData = [
+                'airQuality' => $airQuality,
+                'userData' => $userData
             ];
             
-            foreach ($userFields as $key => $label) {
-                if (!empty($userData[$key])) {
-                    $userTextParts[] = "$label: {$userData[$key]}";
-                }
-            }
-            
-            $text = implode("\n", $userTextParts);
+            $text = "Air Quality Data:\n" . $airQuality . "\n\nUser Data (JSON):\n" . json_encode($userData, JSON_PRETTY_PRINT);
             
             // Optimize: Only log if logging is enabled (check first to avoid I/O)
             if (defined('ENABLE_LOGGING') && ENABLE_LOGGING) {
@@ -54,15 +44,18 @@ class OPENAITOOL {
                         'content' => [
                             ['type' => 'input_text', 'text' => $text],
                             ['type' => 'input_image', 'image_url' => $image],
-							['type' => 'input_text',  'text'=>  "IMPORTANT: Format your response using HTML tags for proper structure:
-									- Use <h2> for main section headings
-									- Use <h3> for sub-section headings
-									- Use <p> for paragraphs
-									- Use <ul> and <li> for lists
-									- Use <strong> for emphasis
-									- Use <small> for secondary information
-									- Use <br> for line breaks when needed
-									Structure your response with clear HTML formatting to make it easy to read and understand."
+							['type' => 'input_text',  'text'=>  "IMPORTANT: 
+1. Parse the User Data JSON to extract relevant information (age, gender, skinType, topConcern, etc.). Handle missing/null values gracefully.
+2. Use both air quality data and user data to personalize your analysis.
+3. Format your response using HTML tags for proper structure:
+   - Use <h2> for main section headings
+   - Use <h3> for sub-section headings
+   - Use <p> for paragraphs
+   - Use <ul> and <li> for lists
+   - Use <strong> for emphasis
+   - Use <small> for secondary information
+   - Use <br> for line breaks when needed
+4. Structure your response with clear HTML formatting to make it easy to read and understand."
 							],
                         ]
                     ]

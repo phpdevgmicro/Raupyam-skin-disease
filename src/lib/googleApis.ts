@@ -96,12 +96,15 @@ export async function fetchWeather(coordinates: Coordinates): Promise<WeatherRes
     
     return {
       // 🌡️ Climate factors
-      temperature: data.temperature?.degrees,     
-      humidity: data.relativeHumidity,            
+      temperature: {
+        value: data.temperature?.value || data.temperature?.degrees,
+        unit: data.temperature?.unit || 'C'
+      },
+      humidity: data.relativeHumidity?.value || data.relativeHumidity,            
 
       // ☀️ UV and sun exposure
-      uvIndex: data.uvIndex,                     
-      condition: data.weatherCondition?.description?.text, 
+      uvIndex: data.uvIndex?.value || data.uvIndex,                     
+      condition: data.weatherCondition?.descriptionon?.text, 
 
       // 🌬️ Air and barrier impact
       windSpeed: data.wind?.speed?.value,         

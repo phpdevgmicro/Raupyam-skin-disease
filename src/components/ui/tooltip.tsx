@@ -94,12 +94,20 @@ const TooltipTrigger = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger>
 >(({ onClick, onPointerEnter, onPointerLeave, onFocus, onKeyDown, ...props }, ref) => {
-  const { toggle } = useTooltipContext();
+  const { toggle, open } = useTooltipContext();
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+
+  React.useImperativeHandle(ref, () => triggerRef.current!);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    toggle();
+    
+    // Small delay to ensure Radix's state is settled
+    setTimeout(() => {
+      toggle();
+    }, 10);
+    
     onClick?.(e);
   };
 
@@ -129,7 +137,7 @@ const TooltipTrigger = React.forwardRef<
 
   return (
     <TooltipPrimitive.Trigger
-      ref={ref}
+      ref={triggerRef}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onPointerEnter={handlePointerEnter}

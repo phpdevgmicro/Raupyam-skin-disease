@@ -12,9 +12,20 @@ export interface PersonalizationData {
     city: string;
     aqi?: number;
     aqiCategory?: string;
+    dominantPollutant?: string;
     humidity?: number;
     uvIndex?: number;
     temperature?: number;
+    weatherDesc?: string;
+    pm25?: number;
+    pm10?: number;
+    no2?: number;
+    o3?: number;
+    so2?: number;
+    co?: number;
+    windSpeed?: number;
+    cloudCover?: number;
+    visibility?: number;
   };
 }
 
@@ -24,6 +35,50 @@ export function formatPersonalizationData(
   airQuality: AirQualityResponse | null,
   weather: WeatherResponse | null
 ): PersonalizationData {
+  // Extract temperature value, handling both nested object and direct value
+  let temperatureValue: number | undefined;
+  if (weather?.temperature) {
+    if (typeof weather.temperature === 'object' && 'value' in weather.temperature) {
+      temperatureValue = weather.temperature.value;
+    } else if (typeof weather.temperature === 'number') {
+      temperatureValue = weather.temperature;
+    }
+  }
+
+  // Extract wind speed value
+  let windSpeedValue: number | undefined;
+  if (weather?.windSpeed) {
+    if (typeof weather.windSpeed === 'object' && 'value' in weather.windSpeed) {
+      windSpeedValue = weather.windSpeed.value;
+    } else if (typeof weather.windSpeed === 'number') {
+      windSpeedValue = weather.windSpeed;
+    }
+  }
+
+  // Extract all pollutant values from air quality data
+  let pm25Value: number | undefined;
+  let pm10Value: number | undefined;
+  let no2Value: number | undefined;
+  let o3Value: number | undefined;
+  let so2Value: number | undefined;
+  let coValue: number | undefined;
+
+  if (airQuality?.pollutants && Array.isArray(airQuality.pollutants)) {
+    airQuality.pollutants.forEach((pollutant: any) => {
+      const code = pollutant.code?.toLowerCase();
+      const value = pollutant.concentration?.value;
+      
+      if (value !== undefined) {
+        if (code === 'pm25') pm25Value = value;
+        else if (code === 'pm10') pm10Value = value;
+        else if (code === 'no2') no2Value = value;
+        else if (code === 'o3') o3Value = value;
+        else if (code === 'so2') so2Value = value;
+        else if (code === 'co') coValue = value;
+      }
+    });
+  }
+
   return {
     userData: {
       age: formData.age,
@@ -35,9 +90,20 @@ export function formatPersonalizationData(
       city,
       aqi: airQuality?.aqi,
       aqiCategory: airQuality?.category,
+      dominantPollutant: airQuality?.dominantPollutant,
       humidity: weather?.humidity,
       uvIndex: weather?.uvIndex,
-      temperature: weather?.temperature?.value,
+      temperature: temperatureValue,
+      weatherDesc: weather?.condition,
+      pm25: pm25Value,
+      pm10: pm10Value,
+      no2: no2Value,
+      o3: o3Value,
+      so2: so2Value,
+      co: coValue,
+      windSpeed: windSpeedValue,
+      cloudCover: weather?.cloudCover,
+      visibility: weather?.visibility,
     },
   };
 }

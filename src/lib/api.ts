@@ -39,6 +39,7 @@ export const API_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 export const API_ENDPOINTS = {
   analyze: `${API_BASE_URL}/route.php?type=${btoa('analysis')}`,
   feedback: `${API_BASE_URL}/route.php?type=${btoa('feedback')}`,
+  personalizeMagic: `${API_BASE_URL}/route.php?type=${btoa('personalize-magic')}`,
 };
 
 export interface AnalysisRequestData {
@@ -99,4 +100,61 @@ export async function submitFeedback(suggestion: string, email: string) {
   }
 
   return response.json();
+}
+
+export interface PersonalizeMagicRequest {
+  userData: {
+    age?: number;
+    gender?: string;
+    skinType?: string;
+    topConcern?: string[];
+  };
+  environmentData: {
+    city: string;
+    aqi?: number;
+    aqiCategory?: string;
+    dominantPollutant?: string;
+    humidity?: number;
+    uvIndex?: number;
+    temperature?: number;
+    weatherDesc?: string;
+    pm25?: number;
+    pm10?: number;
+    no2?: number;
+    o3?: number;
+    so2?: number;
+    co?: number;
+    windSpeed?: number;
+    cloudCover?: number;
+    visibility?: number;
+  };
+}
+
+export interface PersonalizeMagicResponse {
+  personalizedText?: string;
+  error?: string;
+}
+
+export async function getPersonalizedMagicText(data: PersonalizeMagicRequest): Promise<PersonalizeMagicResponse> {
+  try {
+    const response = await fetch(API_ENDPOINTS.personalizeMagic, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(errorData.error || `API request failed with status ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Personalize magic API error:', error);
+    return {
+      error: error instanceof Error ? error.message : 'Failed to generate personalized text',
+    };
+  }
 }

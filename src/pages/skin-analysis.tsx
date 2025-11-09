@@ -177,16 +177,6 @@ export default function SkinAnalysis() {
 
           {step === "upload" && (
             <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in duration-300">
-              <div className="text-center">
-                <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                  Upload Your Image
-                </h2>
-                <p className="text-muted-foreground">
-                  Upload a clear photo of the affected skin area for accurate
-                  analysis
-                </p>
-              </div>
-
               <ImageUpload
                 onImagesChange={setImages}
                 onStartAnalysis={

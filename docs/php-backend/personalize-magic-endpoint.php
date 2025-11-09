@@ -59,31 +59,26 @@ We don't guess—we *get* your backdrop. Pulling live deets like:
 Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 35yo combination type in rainy Seattle? Peptide emulsion with humectant layers—balanced, dewy by week 3.)";
 
 // System prompt for OpenAI
-$systemPrompt = "You are a Dynamic Text Personalizer for a skincare app. Your job: Take a static text template and user/env data, then rewrite it to feel hyper-personal—like a custom note from a skincare coach.
+$systemPrompt = "You are a Dynamic Text Personalizer for a skincare app. Your job: Take a static text template and user/environment data (provided as JSON), then rewrite it to feel hyper-personal—like a custom note from a skincare coach.
 
 Rules:
-- Inject data naturally: Swap placeholders (e.g., [CITY]) with exact values; adapt examples to match user profile (e.g., if age=42, skin=oily, high UV—suggest \"niacinamide mist for oil-taming glow\").
+- Parse JSON data: Extract relevant values from the userData and environmentData JSON objects. Handle missing/null values gracefully.
+- Inject data naturally: Swap placeholders (e.g., [CITY]) with exact values from the JSON; adapt examples to match user profile (e.g., if age=42, skinType=oily, high UV—suggest \"niacinamide mist for oil-taming glow\").
 - Keep tone warm, witty, global: Empathetic, fun, empowering (e.g., \"Your city's haze? We've got shields!\").
 - Brevity: Output exactly matches the template structure/length—trim fluff, no additions.
 - Personalization Logic:
-  - Env: Tie to skincare (e.g., high AQI → \"antioxidant boost\"; high humidity → \"matte textures\").
-  - User: Blend age/gender/skin (e.g., \"For your 30s oily vibe...\").
+  - Environment: Use data like aqi, pm25, humidity, temperature, uvIndex, weatherDesc, etc. to recommend skincare (e.g., high AQI → \"antioxidant boost\"; high humidity → \"matte textures\").
+  - User: Blend age, gender, skinType, topConcern from JSON (e.g., \"For your 30s oily vibe...\").
   - Examples: Always 1 tailored \"E.g.\" sentence; quantify wins (e.g., \"smoother by week 2\").
 - Output ONLY the modified text—no intros, explanations, or code. Use markdown for lists/bolds.
-- If data missing, use neutrals (e.g., \"your city\" for [CITY]).";
+- If data missing from JSON, use neutrals (e.g., \"your city\" if city is missing).";
 
-// Build user context
-$userContext = "User Profile:
-- Age: " . ($userData['age'] ?? 'not specified') . "
-- Gender: " . ($userData['gender'] ?? 'not specified') . "
-- Skin Type: " . ($userData['skinType'] ?? 'not specified') . "
-- Top Concerns: " . (isset($userData['topConcern']) ? implode(', ', $userData['topConcern']) : 'not specified') . "
+// Build user context with JSON data
+$userContext = "User Profile (JSON):
+" . json_encode($userData, JSON_PRETTY_PRINT) . "
 
-Environmental Data for " . $envData['city'] . ":
-- Air Quality Index (AQI): " . ($envData['aqi'] ?? 'unknown') . " " . (isset($envData['aqiCategory']) ? "({$envData['aqiCategory']})" : '') . "
-- Humidity: " . (isset($envData['humidity']) ? "{$envData['humidity']}%" : 'unknown') . "
-- UV Index: " . ($envData['uvIndex'] ?? 'unknown') . "
-- Temperature: " . (isset($envData['temperature']) ? "{$envData['temperature']}°C" : 'unknown') . "
+Environmental Data (JSON):
+" . json_encode($envData, JSON_PRETTY_PRINT) . "
 
 Template to personalize:
 $templateText";

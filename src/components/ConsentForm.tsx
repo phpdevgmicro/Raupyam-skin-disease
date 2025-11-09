@@ -27,12 +27,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useEffect, useRef, useState, useMemo } from "react";
-import { MapPin, Loader2, Info, Droplets, Wind, Sparkles, Heart, Zap, Sun, Cloud, ArrowRight } from "lucide-react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { MapPin, Loader2, Info, Droplets, Wind, Sparkles, Heart, Zap, Sun, Cloud, ArrowRight, CheckCircle2, Lock, X } from "lucide-react";
 import { fetchEnvironmentalData, detectLocationFromIP, type Coordinates, type AirQualityResponse, type WeatherResponse } from "@/lib/googleApis";
 import { sessionStorage } from "@/lib/sessionStorage";
 import { useToast } from "@/hooks/use-toast";
-import { generatePersonalizedMagicText, formatPersonalizationData } from "@/lib/magicSection";
+import { formatPersonalizationData } from "@/lib/magicSection";
+import { getPersonalizedMagicText } from "@/lib/api";
 
 interface ConsentFormProps {
   onSubmit: (data: ConsentFormData) => void;
@@ -56,6 +57,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     city: string;
   } | null>(null);
   const [isAutoDetecting, setIsAutoDetecting] = useState(false);
+  const [personalizedMagicText, setPersonalizedMagicText] = useState<string | null>(null);
+  const [isLoadingMagicText, setIsLoadingMagicText] = useState(false);
+  const [cachedProfileHash, setCachedProfileHash] = useState<string | null>(null);
+  const [accordionOpen, setAccordionOpen] = useState<string | undefined>(undefined);
   const { toast } = useToast();
 
   const form = useForm<ConsentFormData>({
@@ -73,25 +78,139 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     },
   });
 
-  // Watch form values for Magic Section personalization
+  // Watch form values for completion validation
   const age = form.watch("age");
   const gender = form.watch("gender");
   const skinType = form.watch("skinType");
   const topConcern = form.watch("topConcern");
 
-  // Generate personalized magic text based on form data and environmental data
-  const personalizedMagicText = useMemo(() => {
-    if (!environmentalData) return null;
-    
-    const personalizationData = formatPersonalizationData(
-      { age, gender, skinType, topConcern },
-      environmentalData.city,
-      environmentalData.airQuality,
-      environmentalData.weather
+  // Watch location fields for manual entry
+  const city = form.watch("city");
+  const address = form.watch("address");
+
+  // Get effective location - prefer manual entry over auto-detected data
+  const effectiveLocation = useMemo(() => {
+    // If user has manually entered city, use that
+    if (city && city.trim()) {
+      return city.trim();
+    }
+    // Otherwise use environmental data city if available
+    if (environmentalData?.city) {
+      return environmentalData.city;
+    }
+    // Fall back to address if that's all we have
+    if (address && address.trim()) {
+      return "your area";
+    }
+    return null;
+  }, [city, environmentalData?.city, address]);
+
+  // Check if all required fields are complete (including manual location entry)
+  const isPersonalizationReady = useMemo(() => {
+    return !!(
+      age > 0 &&
+      gender &&
+      skinType &&
+      topConcern.length > 0 &&
+      effectiveLocation
     );
+  }, [age, gender, skinType, topConcern, effectiveLocation]);
+
+  // Get missing fields for checklist
+  const missingFields = useMemo(() => {
+    const missing: Array<{ label: string; icon: any }> = [];
+    if (!age || age === 0) missing.push({ label: "Age", icon: Sun });
+    if (!gender) missing.push({ label: "Gender", icon: Heart });
+    if (!skinType) missing.push({ label: "Skin Type", icon: Droplets });
+    if (!topConcern.length) missing.push({ label: "Top Concern", icon: Zap });
+    if (!effectiveLocation) missing.push({ label: "Location", icon: MapPin });
+    return missing;
+  }, [age, gender, skinType, topConcern, effectiveLocation]);
+
+  // Generate hash of current profile for caching
+  const generateProfileHash = useCallback(() => {
+    return JSON.stringify({
+      age,
+      gender,
+      skinType,
+      topConcern: [...topConcern].sort(),
+      // Use effective location (prioritizes manual over auto-detect)
+      locationCity: effectiveLocation,
+      // Only include environmental data if it matches effective location
+      aqi: (effectiveLocation === environmentalData?.city) ? environmentalData?.airQuality?.aqi : null,
+      aqiCategory: (effectiveLocation === environmentalData?.city) ? environmentalData?.airQuality?.category : null,
+      humidity: (effectiveLocation === environmentalData?.city) ? environmentalData?.weather?.humidity : null,
+      temperature: (effectiveLocation === environmentalData?.city) ? environmentalData?.weather?.temperature : null,
+      uvIndex: (effectiveLocation === environmentalData?.city) ? environmentalData?.weather?.uvIndex : null,
+    });
+  }, [age, gender, skinType, topConcern, effectiveLocation, environmentalData]);
+
+  // Handle accordion toggle - fetch personalized magic when opened
+  const handleAccordionChange = async (value: string | undefined) => {
+    setAccordionOpen(value);
     
-    return generatePersonalizedMagicText(personalizationData);
-  }, [environmentalData, age, gender, skinType, topConcern]);
+    // Only fetch when accordion opens and profile is ready
+    if (value === "behind-scenes" && isPersonalizationReady) {
+      const currentHash = generateProfileHash();
+      
+      // Skip if we already have cached result for this exact profile
+      if (cachedProfileHash === currentHash && personalizedMagicText) {
+        return;
+      }
+      
+      setIsLoadingMagicText(true);
+      
+      try {
+        // Use effective location and only include env data if it matches
+        const useEnvData = effectiveLocation === environmentalData?.city;
+        
+        const personalizationData = formatPersonalizationData(
+          { age, gender, skinType, topConcern },
+          effectiveLocation || "your area",
+          useEnvData ? (environmentalData?.airQuality || null) : null,
+          useEnvData ? (environmentalData?.weather || null) : null
+        );
+
+        const response = await getPersonalizedMagicText(personalizationData);
+        
+        if (response.personalizedText) {
+          setPersonalizedMagicText(response.personalizedText);
+          setCachedProfileHash(currentHash);
+          
+          // Show a friendly notice if environmental data is missing or not being used
+          if (!useEnvData) {
+            toast({
+              title: "Using generic recommendations",
+              description: effectiveLocation === environmentalData?.city 
+                ? "We couldn't fetch live environmental data, but we've still crafted personalized insights for you!"
+                : "Using your manually entered location with general recommendations. For live AQI and weather data, select from autocomplete.",
+              duration: 5000,
+            });
+          }
+        } else if (response.error) {
+          console.error('Failed to get personalized text:', response.error);
+          setPersonalizedMagicText(null);
+          toast({
+            title: "Couldn't load personalized magic",
+            description: "Please try again in a moment.",
+            variant: "destructive",
+            duration: 3000,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching personalized text:', error);
+        setPersonalizedMagicText(null);
+        toast({
+          title: "Something went wrong",
+          description: "Please try again later.",
+          variant: "destructive",
+          duration: 3000,
+        });
+      } finally {
+        setIsLoadingMagicText(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (addressInputRef.current && window.google?.maps?.places) {
@@ -526,20 +645,38 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                   <FormItem>
                     <FormLabel className="text-base">City *</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter city"
-                        data-testid="input-city"
-                        autoComplete="off"
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          if (field.value === "" || !addressSelected) {
-                            setAddressSelected(false);
-                          }
-                        }}
-                        readOnly={field.value !== "" && addressSelected}
-                        className={`min-h-11 text-base ${field.value !== "" && addressSelected ? "bg-muted" : ""}`}
-                      />
+                      <div className="relative">
+                        <Input
+                          placeholder="Enter city"
+                          data-testid="input-city"
+                          autoComplete="off"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            if (addressSelected) {
+                              setAddressSelected(false);
+                              setEnvironmentalData(null);
+                            }
+                          }}
+                          className="min-h-11 text-base pr-10"
+                        />
+                        {field.value && (
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                            onClick={() => {
+                              field.onChange("");
+                              setAddressSelected(false);
+                              setEnvironmentalData(null);
+                            }}
+                            data-testid="button-clear-city"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -560,12 +697,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
-                          if (field.value === "" || !addressSelected) {
+                          if (addressSelected) {
                             setAddressSelected(false);
+                            setEnvironmentalData(null);
                           }
                         }}
-                        readOnly={field.value !== "" && addressSelected}
-                        className={`min-h-11 text-base ${field.value !== "" && addressSelected ? "bg-muted" : ""}`}
+                        className="min-h-11 text-base"
                       />
                     </FormControl>
                     <FormMessage />
@@ -587,12 +724,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
-                          if (field.value === "" || !addressSelected) {
+                          if (addressSelected) {
                             setAddressSelected(false);
+                            setEnvironmentalData(null);
                           }
                         }}
-                        readOnly={field.value !== "" && addressSelected}
-                        className={`min-h-11 text-base ${field.value !== "" && addressSelected ? "bg-muted" : ""}`}
+                        className="min-h-11 text-base"
                       />
                     </FormControl>
                     <FormMessage />
@@ -632,19 +769,68 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             )}
 
             {/* Behind the Scenes Accordion - Magic Section */}
-            {environmentalData && personalizedMagicText && (
+            {effectiveLocation && (
               <div className="mt-6">
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion type="single" collapsible className="w-full" value={accordionOpen} onValueChange={handleAccordionChange}>
                   <AccordionItem value="behind-scenes" className="border-none">
                     <AccordionTrigger className="text-base font-medium hover:no-underline text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4" />
-                        Behind the Scenes: How We Make Magic for {environmentalData.city} 🌆
+                      <div className="flex items-center justify-between gap-2 flex-1">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4" />
+                          Behind the Scenes: How We Make Magic for {effectiveLocation} 🌆
+                        </div>
+                        {isPersonalizationReady ? (
+                          <Badge variant="default" className="ml-2 gap-1 text-xs">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Ready!
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className="ml-2 gap-1 text-xs">
+                            <Lock className="w-3 h-3" />
+                            {5 - missingFields.length}/5
+                          </Badge>
+                        )}
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-sm text-foreground space-y-4 pt-4">
-                      <div className="prose prose-sm max-w-none dark:prose-invert">
-                        {personalizedMagicText.split('\n').map((line, index) => {
+                      {!isPersonalizationReady ? (
+                        <div className="space-y-4 p-4 bg-muted/30 rounded-lg border border-muted">
+                          <div className="flex items-start gap-3">
+                            <Lock className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                            <div className="space-y-2 flex-1">
+                              <p className="font-medium text-foreground">
+                                Complete your profile to unlock personalized magic! ✨
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                We need a bit more info to craft your perfect skincare experience:
+                              </p>
+                              <div className="mt-3 space-y-2">
+                                {missingFields.map((field, index) => {
+                                  const Icon = field.icon;
+                                  return (
+                                    <div key={index} className="flex items-center gap-2 text-sm">
+                                      <Icon className="w-4 h-4 text-primary" />
+                                      <span className="text-muted-foreground">{field.label}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : isLoadingMagicText ? (
+                        <div className="flex flex-col items-center justify-center py-8 space-y-3">
+                          <div className="relative">
+                            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                            <Sparkles className="w-4 h-4 text-primary absolute top-0 right-0 animate-pulse" />
+                          </div>
+                          <p className="text-sm text-muted-foreground animate-pulse">
+                            Crafting your personalized magic...
+                          </p>
+                        </div>
+                      ) : personalizedMagicText ? (
+                        <div className="prose prose-sm max-w-none dark:prose-invert animate-in fade-in duration-500">
+                          {personalizedMagicText.split('\n').map((line, index) => {
                           if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
                             // Bold heading
                             return (
@@ -684,7 +870,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           }
                           return null;
                         })}
-                      </div>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">
+                          Something went wrong. Please try again.
+                        </p>
+                      )}
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
