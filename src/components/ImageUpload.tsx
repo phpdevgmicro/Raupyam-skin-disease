@@ -141,7 +141,7 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
                       data-testid="button-start-analysis"
                     >
                       <Sparkles className="w-5 h-5" />
-                      Start Analysis
+                      Reveal Results
                     </Button>
                   </div>
                 )}

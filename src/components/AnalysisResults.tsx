@@ -93,7 +93,8 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
           </h3>
           <div className="bg-muted/30 rounded-lg p-6 md:p-8">
             <div
-              className="text-foreground leading-relaxed prose prose-base md:prose-lg max-w-none dark:prose-invert [&_p]:text-base [&_p]:md:text-lg [&_p]:leading-relaxed [&_p]:mb-5 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_li]:text-base [&_li]:md:text-lg [&_li]:leading-relaxed [&_li]:mb-2 [&_ul]:space-y-2 [&_ol]:space-y-2 [&_strong]:font-semibold [&_strong]:text-foreground"
+              className="text-foreground leading-relaxed prose prose-base md:prose-lg max-w-none dark:prose-invert [&_p]:text-base [&_p]:md:text-lg [&_p]:leading-relaxed [&_p]:mb-5 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_li]:text-base [&_li]:md:text-lg [&_li]:leading-relaxed [&_li]:mb-2 [&_ul]:space-y-2 [&_ol]:space-y-2 [&_strong]:font-semibold [&_strong]:text-foreground [&_span]:text-base [&_span]:md:text-lg [&_span]:leading-relaxed [&_small]:text-sm [&_small]:leading-relaxed [&_em]:text-base [&_em]:md:text-lg [&_u]:text-base [&_u]:md:text-lg [&_div]:text-base [&_div]:md:text-lg [&_div]:leading-relaxed"
+              style={{ fontFamily: 'var(--font-body)' }}
               data-testid="text-analysis"
               dangerouslySetInnerHTML={{ __html: sanitizedAnalysis }}
             />
@@ -116,7 +117,7 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
                   <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold text-lg md:text-xl">
                     {index + 1}
                   </div>
-                  <p className="text-base md:text-lg leading-relaxed flex-1 pt-1">
+                  <p className="text-base md:text-lg leading-relaxed flex-1 pt-1" style={{ fontFamily: 'var(--font-body)' }}>
                     {recommendation}
                   </p>
                 </div>

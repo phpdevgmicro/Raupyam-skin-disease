@@ -64,6 +64,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   const [isLoadingMagicText, setIsLoadingMagicText] = useState(false);
   const [cachedProfileHash, setCachedProfileHash] = useState<string | null>(null);
   const [accordionOpen, setAccordionOpen] = useState<string | undefined>(undefined);
+  const [isManuallyOpened, setIsManuallyOpened] = useState(false);
+  const requestTokenRef = useRef(0);
   const { toast } = useToast();
 
   const form = useForm<ConsentFormData>({
@@ -148,79 +150,130 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     });
   }, [age, gender, skinType, topConcern, effectiveLocation, environmentalData]);
 
-  // Centralized handler for form field changes - resets magic section
+  // Centralized handler for form field changes - clears cached data but keeps accordion open if manually opened
   const handleFormFieldChange = useCallback(() => {
-    setAccordionOpen(undefined);
+    // Always clear cached personalization when fields change
     setPersonalizedMagicText(null);
     setCachedProfileHash(null);
-  }, []);
+    
+    // Only close accordion if it wasn't manually opened by user
+    if (!isManuallyOpened) {
+      setAccordionOpen(undefined);
+    }
+  }, [isManuallyOpened]);
+
+  // Extracted fetch logic for personalization
+  const fetchMagicText = useCallback(async () => {
+    const currentHash = generateProfileHash();
+    
+    // Skip if we already have cached result for this exact profile
+    if (cachedProfileHash === currentHash && personalizedMagicText) {
+      return;
+    }
+    
+    // Increment request token to invalidate any in-flight requests
+    const thisRequestToken = ++requestTokenRef.current;
+    
+    setIsLoadingMagicText(true);
+    
+    try {
+      // Use effective location and only include env data if it matches
+      const useEnvData = effectiveLocation === environmentalData?.city;
+      
+      const personalizationData = formatPersonalizationData(
+        { age, gender, skinType, topConcern },
+        effectiveLocation || "your area",
+        useEnvData ? (environmentalData?.airQuality || null) : null,
+        useEnvData ? (environmentalData?.weather || null) : null
+      );
+
+      const response = await getPersonalizedMagicText(personalizationData);
+      
+      // Ignore response if a newer request has been made
+      if (thisRequestToken !== requestTokenRef.current) {
+        return;
+      }
+      
+      if (response.personalizedText) {
+        setPersonalizedMagicText(response.personalizedText);
+        setCachedProfileHash(currentHash);
+        
+        // Show a friendly notice if environmental data is missing or not being used
+        if (!useEnvData) {
+          toast({
+            title: "Using generic recommendations",
+            description: effectiveLocation === environmentalData?.city 
+              ? "We couldn't fetch live environmental data, but we've still crafted personalized insights for you!"
+              : "Using your manually entered location with general recommendations. For live AQI and weather data, select from autocomplete.",
+            duration: 5000,
+          });
+        }
+      } else if (response.error) {
+        console.error('Failed to get personalized text:', response.error);
+        setPersonalizedMagicText(null);
+        toast({
+          title: "Couldn't load personalized magic",
+          description: "Please try again in a moment.",
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching personalized text:', error);
+      
+      // Ignore errors from stale requests
+      if (thisRequestToken !== requestTokenRef.current) {
+        return;
+      }
+      
+      setPersonalizedMagicText(null);
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      // Only clear loading flag if this is still the current request
+      if (thisRequestToken === requestTokenRef.current) {
+        setIsLoadingMagicText(false);
+      }
+    }
+  }, [generateProfileHash, cachedProfileHash, personalizedMagicText, effectiveLocation, environmentalData, age, gender, skinType, topConcern, toast]);
 
   // Handle accordion toggle - fetch personalized magic when opened
   const handleAccordionChange = async (value: string | undefined) => {
     setAccordionOpen(value);
     
+    // Track if user manually opened the accordion
+    if (value === "behind-scenes") {
+      setIsManuallyOpened(true);
+    } else {
+      setIsManuallyOpened(false);
+    }
+    
     // Only fetch when accordion opens and profile is ready
     if (value === "behind-scenes" && isPersonalizationReady) {
-      const currentHash = generateProfileHash();
-      
-      // Skip if we already have cached result for this exact profile
-      if (cachedProfileHash === currentHash && personalizedMagicText) {
-        return;
-      }
-      
-      setIsLoadingMagicText(true);
-      
-      try {
-        // Use effective location and only include env data if it matches
-        const useEnvData = effectiveLocation === environmentalData?.city;
-        
-        const personalizationData = formatPersonalizationData(
-          { age, gender, skinType, topConcern },
-          effectiveLocation || "your area",
-          useEnvData ? (environmentalData?.airQuality || null) : null,
-          useEnvData ? (environmentalData?.weather || null) : null
-        );
-
-        const response = await getPersonalizedMagicText(personalizationData);
-        
-        if (response.personalizedText) {
-          setPersonalizedMagicText(response.personalizedText);
-          setCachedProfileHash(currentHash);
-          
-          // Show a friendly notice if environmental data is missing or not being used
-          if (!useEnvData) {
-            toast({
-              title: "Using generic recommendations",
-              description: effectiveLocation === environmentalData?.city 
-                ? "We couldn't fetch live environmental data, but we've still crafted personalized insights for you!"
-                : "Using your manually entered location with general recommendations. For live AQI and weather data, select from autocomplete.",
-              duration: 5000,
-            });
-          }
-        } else if (response.error) {
-          console.error('Failed to get personalized text:', response.error);
-          setPersonalizedMagicText(null);
-          toast({
-            title: "Couldn't load personalized magic",
-            description: "Please try again in a moment.",
-            variant: "destructive",
-            duration: 3000,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching personalized text:', error);
-        setPersonalizedMagicText(null);
-        toast({
-          title: "Something went wrong",
-          description: "Please try again later.",
-          variant: "destructive",
-          duration: 3000,
-        });
-      } finally {
-        setIsLoadingMagicText(false);
-      }
+      fetchMagicText();
     }
   };
+  
+  // Auto-refetch when accordion is open and profile data changes
+  useEffect(() => {
+    if (
+      accordionOpen === "behind-scenes" && 
+      isPersonalizationReady && 
+      !personalizedMagicText &&
+      !isLoadingMagicText  // Prevent duplicate requests while one is in flight
+    ) {
+      // Debounce to avoid excessive requests during rapid edits
+      const timeoutId = setTimeout(() => {
+        fetchMagicText();
+      }, 500);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [accordionOpen, isPersonalizationReady, personalizedMagicText, isLoadingMagicText, generateProfileHash, fetchMagicText]);
 
   useEffect(() => {
     if (addressInputRef.current && window.google?.maps?.places) {
@@ -256,6 +309,24 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
           form.setValue("city", city, { shouldValidate: true });
           form.setValue("state", state, { shouldValidate: true });
           form.setValue("country", country, { shouldValidate: true });
+          
+          // Validate that required address fields are present
+          if (!city || !state || !country) {
+            // Clear the address if incomplete
+            form.setValue("address", "", { shouldValidate: false });
+            form.setValue("city", "", { shouldValidate: false });
+            form.setValue("state", "", { shouldValidate: false });
+            form.setValue("country", "", { shouldValidate: false });
+            setAddressSelected(false);
+            
+            toast({
+              title: "Incomplete Address",
+              description: "The selected address is missing some required details (city, state, or country). Please type a more complete address and select from the suggestions.",
+              variant: "destructive",
+              duration: 6000,
+            });
+            return;
+          }
           
           // Reset magic section when location changes
           handleFormFieldChange();
@@ -849,12 +920,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           </p>
                         </div>
                       ) : personalizedMagicText ? (
-                        <div className="prose prose-base max-w-none dark:prose-invert animate-in fade-in duration-500">
+                        <div className="max-w-none animate-in fade-in duration-500" style={{ fontFamily: 'var(--font-body)' }}>
                           {personalizedMagicText.split('\n').map((line, index) => {
                           if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
                             // Bold heading
                             return (
-                              <h3 key={index} className="font-bold text-lg md:text-xl text-foreground mb-4 mt-6 first:mt-0">
+                              <h3 key={index} className="font-bold text-lg md:text-xl text-foreground mb-3 mt-4 first:mt-0">
                                 {line.replace(/\*\*/g, '')}
                               </h3>
                             );
@@ -863,9 +934,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             const match = line.match(/- \*\*(.+?)\*\*:(.+)/);
                             if (match) {
                               return (
-                                <div key={index} className="flex items-start gap-3 mb-4 pl-1">
-                                  <span className="text-primary text-base font-bold mt-1.5 flex-shrink-0">•</span>
-                                  <p className="text-base leading-relaxed flex-1">
+                                <div key={index} className="flex items-start gap-3 mb-2 pl-1">
+                                  <span className="text-primary text-base font-bold mt-0.5 flex-shrink-0">•</span>
+                                  <p className="text-base leading-snug flex-1">
                                     <span className="font-semibold text-foreground">{match[1]}:</span>
                                     <span className="text-foreground/80">{match[2]}</span>
                                   </p>
@@ -875,15 +946,15 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           } else if (line.trim().startsWith('- ')) {
                             // Regular bullet point
                             return (
-                              <div key={index} className="flex items-start gap-3 mb-3 pl-1">
-                                <span className="text-primary text-base font-bold mt-1.5 flex-shrink-0">•</span>
-                                <p className="text-base text-foreground/80 leading-relaxed flex-1">{line.substring(2)}</p>
+                              <div key={index} className="flex items-start gap-3 mb-2 pl-1">
+                                <span className="text-primary text-base font-bold mt-0.5 flex-shrink-0">•</span>
+                                <p className="text-base text-foreground/80 leading-snug flex-1">{line.substring(2)}</p>
                               </div>
                             );
                           } else if (line.trim()) {
                             // Regular paragraph
                             return (
-                              <p key={index} className="text-base text-foreground/80 leading-relaxed mb-4">
+                              <p key={index} className="text-base text-foreground/80 leading-normal mb-2">
                                 {line}
                               </p>
                             );
