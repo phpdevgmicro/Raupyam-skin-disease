@@ -4,6 +4,7 @@ const STORAGE_KEYS = {
   PATIENT_DATA: 'skin_analysis_patient_data',
   COORDINATES: 'skin_analysis_coordinates',
   AIR_QUALITY: 'skin_analysis_air_quality',
+  WEATHER: 'skin_analysis_weather',
   IMAGES: 'skin_analysis_images',
 } as const;
 
@@ -23,6 +24,21 @@ export interface AirQualityData {
   timestamp?: string;
 }
 
+export interface WeatherData {
+  temperature?: {
+    value: number;
+    unit: string;
+  };
+  humidity?: number;
+  windSpeed?: {
+    value: number;
+    unit: string;
+  };
+  condition?: string;
+  uvIndex?: number;
+  timestamp?: string;
+}
+
 export const sessionStorage = {
   savePatientData(data: PatientSessionData) {
     window.sessionStorage.setItem(STORAGE_KEYS.PATIENT_DATA, JSON.stringify(data));
@@ -39,6 +55,15 @@ export const sessionStorage = {
 
   getAirQuality(): AirQualityData | null {
     const data = window.sessionStorage.getItem(STORAGE_KEYS.AIR_QUALITY);
+    return data ? JSON.parse(data) : null;
+  },
+
+  saveWeather(data: WeatherData) {
+    window.sessionStorage.setItem(STORAGE_KEYS.WEATHER, JSON.stringify(data));
+  },
+
+  getWeather(): WeatherData | null {
+    const data = window.sessionStorage.getItem(STORAGE_KEYS.WEATHER);
     return data ? JSON.parse(data) : null;
   },
 

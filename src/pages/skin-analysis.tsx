@@ -104,8 +104,11 @@ export default function SkinAnalysis() {
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="text-center mb-6 md:mb-8">
           <h2 className="text-xl md:text-2xl font-semibold text-foreground">
-            Unlock Your Skin's Hidden Superpowers ✨
+            Unlock Your Skin's Global Edge ✨
           </h2>
+          <p className="text-sm md:text-base text-muted-foreground mt-2 max-w-3xl mx-auto">
+            In 60 seconds, we'll whip up a custom elixir tuned to your world—whether it's NYC's urban grit or Paris's crisp chill. We tap your city's air, water, and rays for ninja-level protection.
+          </p>
         </div>
 
         {step !== "loading" && (

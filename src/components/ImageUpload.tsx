@@ -103,11 +103,11 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
         <div className="space-y-4">
           <Card className="relative overflow-hidden">
             <CardContent className="p-0">
-              <div className="relative aspect-[4/3] w-full">
+              <div className="relative w-full max-h-[700px] min-h-[400px]">
                 <img
                   src={image}
                   alt="Uploaded image"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain max-h-[700px]"
                   data-testid="image-preview"
                 />
                 

@@ -13,6 +13,20 @@ export interface AirQualityResponse {
   indexes?: any[];
 }
 
+export interface WeatherResponse {
+  temperature?: {
+    value: number;
+    unit: string;
+  };
+  humidity?: number;
+  windSpeed?: {
+    value: number;
+    unit: string;
+  };
+  condition?: string;
+  uvIndex?: number;
+}
+
 export async function fetchAirQuality(coordinates: Coordinates): Promise<AirQualityResponse | null> {
   try {
     const response = await fetch(
@@ -62,6 +76,37 @@ export async function fetchAirQuality(coordinates: Coordinates): Promise<AirQual
   }
 }
 
+export async function fetchWeather(coordinates: Coordinates): Promise<WeatherResponse | null> {
+  try {
+    const response = await fetch(
+      `https://weather.googleapis.com/v1/currentConditions:lookup?key=${GOOGLE_API_KEY}&location.latitude=${coordinates.lat}&location.longitude=${coordinates.lng}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Weather request failed');
+    }
+
+    const data = await response.json();
+    
+    return {
+      temperature: data.temperature,
+      humidity: data.humidity,
+      windSpeed: data.windSpeed,
+      condition: data.condition,
+      uvIndex: data.uvIndex,
+    };
+  } catch (error) {
+    console.error('Error fetching weather:', error);
+    return null;
+  }
+}
+
 export async function fetchAirQualityInBackground(coordinates: Coordinates, onSuccess?: (data: AirQualityResponse) => void) {
   try {
     const airQualityData = await fetchAirQuality(coordinates);
@@ -70,5 +115,28 @@ export async function fetchAirQualityInBackground(coordinates: Coordinates, onSu
     }
   } catch (error) {
     console.error('Background air quality fetch failed:', error);
+  }
+}
+
+export async function fetchEnvironmentalData(coordinates: Coordinates): Promise<{
+  airQuality: AirQualityResponse | null;
+  weather: WeatherResponse | null;
+}> {
+  try {
+    const [airQuality, weather] = await Promise.all([
+      fetchAirQuality(coordinates),
+      fetchWeather(coordinates),
+    ]);
+
+    return {
+      airQuality,
+      weather,
+    };
+  } catch (error) {
+    console.error('Error fetching environmental data:', error);
+    return {
+      airQuality: null,
+      weather: null,
+    };
   }
 }

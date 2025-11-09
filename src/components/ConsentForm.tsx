@@ -21,9 +21,15 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useEffect, useRef, useState } from "react";
-import { MapPin, Loader2, Info, Droplets, Wind, Sparkles, Heart, Zap } from "lucide-react";
-import { fetchAirQualityInBackground, type Coordinates } from "@/lib/googleApis";
+import { MapPin, Loader2, Info, Droplets, Wind, Sparkles, Heart, Zap, Sun, Cloud, ArrowRight } from "lucide-react";
+import { fetchEnvironmentalData, type Coordinates, type AirQualityResponse, type WeatherResponse } from "@/lib/googleApis";
 import { sessionStorage } from "@/lib/sessionStorage";
 import { useToast } from "@/hooks/use-toast";
 
@@ -43,6 +49,11 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   const [lastSubmittedAddress, setLastSubmittedAddress] = useState<string>(
     initialData?.address || ""
   );
+  const [environmentalData, setEnvironmentalData] = useState<{
+    airQuality: AirQualityResponse | null;
+    weather: WeatherResponse | null;
+    city: string;
+  } | null>(null);
   const { toast } = useToast();
 
   const form = useForm<ConsentFormData>({
@@ -69,7 +80,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         }
       );
 
-      autocompleteRef.current.addListener("place_changed", () => {
+      autocompleteRef.current.addListener("place_changed", async () => {
         const place = autocompleteRef.current?.getPlace();
         if (place?.formatted_address) {
           form.setValue("address", place.formatted_address, { shouldValidate: true });
@@ -96,9 +107,18 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
           form.setValue("country", country, { shouldValidate: true });
           
           if ((place as any).geometry?.location) {
-            setCoordinates({
+            const coords = {
               lat: (place as any).geometry.location.lat(),
               lng: (place as any).geometry.location.lng(),
+            };
+            setCoordinates(coords);
+            
+            // Fetch environmental data
+            const envData = await fetchEnvironmentalData(coords);
+            setEnvironmentalData({
+              airQuality: envData.airQuality,
+              weather: envData.weather,
+              city: city || state || country,
             });
           }
           
@@ -117,14 +137,22 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       sessionStorage.savePatientData(patientData);
 
       if (coordinates) {
-        fetchAirQualityInBackground(coordinates, (airQualityData) => {
+        fetchEnvironmentalData(coordinates).then(({ airQuality, weather }) => {
           try {
-            sessionStorage.saveAirQuality({
-              ...airQualityData,
-              timestamp: new Date().toISOString(),
-            });
+            if (airQuality) {
+              sessionStorage.saveAirQuality({
+                ...airQuality,
+                timestamp: new Date().toISOString(),
+              });
+            }
+            if (weather) {
+              sessionStorage.saveWeather({
+                ...weather,
+                timestamp: new Date().toISOString(),
+              });
+            }
           } catch (error) {
-            console.error('Failed to save air quality data in background:', error);
+            console.error('Failed to save environmental data in background:', error);
           }
         });
       } else if (data.address !== lastSubmittedAddress) {
@@ -468,16 +496,97 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 )}
               />
             </div>
+
+            {/* Environmental Data Display */}
+            {environmentalData && environmentalData.city && (
+              <div className="mt-8 p-5 bg-primary/5 border border-primary/20 rounded-lg">
+                <div className="flex items-start gap-3 mb-3">
+                  <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-base font-medium mb-1">
+                      We grabbed <span className="font-semibold text-primary">{environmentalData.city}</span>!
+                    </p>
+                    <div className="space-y-2 text-sm">
+                      {environmentalData.airQuality?.aqi !== undefined && environmentalData.airQuality?.aqi !== null && (
+                        <div className="flex items-center gap-2">
+                          <Wind className="w-4 h-4 text-muted-foreground" />
+                          <span>
+                            AQI: <span className="font-semibold">{environmentalData.airQuality.aqi}</span> 
+                            {' '}({environmentalData.airQuality.category || 'Good'}) - 
+                            {environmentalData.airQuality.aqi > 150 ? ' Extra anti-pollution shields in your mix.' : ' Clean air protection included.'}
+                          </span>
+                        </div>
+                      )}
+                      {environmentalData.weather?.uvIndex !== undefined && environmentalData.weather?.uvIndex !== null && (
+                        <div className="flex items-center gap-2">
+                          <Sun className="w-4 h-4 text-muted-foreground" />
+                          <span>
+                            UV Index: <span className="font-semibold">{environmentalData.weather.uvIndex}</span> - 
+                            {environmentalData.weather.uvIndex > 7 ? ' Strong protection recommended.' : environmentalData.weather.uvIndex > 3 ? ' Moderate UV care needed.' : ' Minimal UV exposure.'}
+                          </span>
+                        </div>
+                      )}
+                      {environmentalData.weather?.humidity !== undefined && environmentalData.weather?.humidity !== null && (
+                        <div className="flex items-center gap-2">
+                          <Droplets className="w-4 h-4 text-muted-foreground" />
+                          <span>
+                            Humidity: <span className="font-semibold">{environmentalData.weather.humidity}%</span> - 
+                            {environmentalData.weather.humidity > 70 ? ' Lightweight formulas for your climate.' : ' Hydration boost for balanced skin.'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Behind the Scenes Accordion */}
+            <div className="mt-6">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="behind-scenes" className="border-none">
+                  <AccordionTrigger className="text-base font-medium hover:no-underline text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      Behind the Scenes: How We Analyze Your World
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground space-y-3 pt-2">
+                    <div className="flex gap-3">
+                      <Wind className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-foreground mb-1">Air Quality Index (AQI)</p>
+                        <p>We check pollution levels in your city. Higher AQI means more free radicals attacking your skin, so we recommend stronger antioxidants like vitamin C and niacinamide.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Sun className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-foreground mb-1">UV Index</p>
+                        <p>Your local sun intensity guides our sunscreen and protection recommendations. High UV? We'll suggest broad-spectrum SPF 50+ and antioxidants.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Droplets className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-foreground mb-1">Humidity Levels</p>
+                        <p>Humidity affects how products absorb. High humidity? Lighter gels. Low humidity? Richer creams to lock in moisture.</p>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           </form>
         </Form>
       </CardContent>
 
-      <div className="px-6 pb-6">
+      <div className="px-6 pb-6 space-y-4">
         <Button
           type="submit"
           onClick={form.handleSubmit(handleFormSubmit)}
           size="lg"
-          className="px-8 h-12"
+          className="w-full px-8 h-12 group"
           data-testid="button-submit-consent"
           disabled={isSubmitting}
         >
@@ -487,9 +596,20 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               Processing...
             </>
           ) : (
-            "Continue to Image Upload"
+            <>
+              Reveal My World-Ready Routine
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </>
           )}
         </Button>
+
+        {/* Fun Fact Footer */}
+        <div className="text-center text-sm text-muted-foreground italic">
+          <span className="inline-flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            Did you know? AQI over 150 doubles free radical damage—our antioxidant picks fight back!
+          </span>
+        </div>
       </div>
     </Card>
   );
