@@ -27,11 +27,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { MapPin, Loader2, Info, Droplets, Wind, Sparkles, Heart, Zap, Sun, Cloud, ArrowRight } from "lucide-react";
 import { fetchEnvironmentalData, detectLocationFromIP, type Coordinates, type AirQualityResponse, type WeatherResponse } from "@/lib/googleApis";
 import { sessionStorage } from "@/lib/sessionStorage";
 import { useToast } from "@/hooks/use-toast";
+import { generatePersonalizedMagicText, formatPersonalizationData } from "@/lib/magicSection";
 
 interface ConsentFormProps {
   onSubmit: (data: ConsentFormData) => void;
@@ -71,6 +72,26 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       country: "",
     },
   });
+
+  // Watch form values for Magic Section personalization
+  const age = form.watch("age");
+  const gender = form.watch("gender");
+  const skinType = form.watch("skinType");
+  const topConcern = form.watch("topConcern");
+
+  // Generate personalized magic text based on form data and environmental data
+  const personalizedMagicText = useMemo(() => {
+    if (!environmentalData) return null;
+    
+    const personalizationData = formatPersonalizationData(
+      { age, gender, skinType, topConcern },
+      environmentalData.city,
+      environmentalData.airQuality,
+      environmentalData.weather
+    );
+    
+    return generatePersonalizedMagicText(personalizationData);
+  }, [environmentalData, age, gender, skinType, topConcern]);
 
   useEffect(() => {
     if (addressInputRef.current && window.google?.maps?.places) {
@@ -299,14 +320,16 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                   <FormItem>
                     <FormLabel className="flex items-center gap-2 text-base">
                       How many trips around the sun? 🌞
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-4 h-4 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p>This lets us tweak for your vibe—antioxidants for 20s pollution fighters, peptides for 40+ firmness.</p>
-                        </TooltipContent>
-                      </Tooltip>
+                      <span onClick={(e) => e.preventDefault()}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p>This lets us tweak for your vibe—antioxidants for 20s pollution fighters, peptides for 40+ firmness.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -331,14 +354,16 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 <FormItem>
                   <FormLabel className="flex items-center gap-2 text-base">
                     Your vibe? (We keep it light—no judgments.) 💫
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="w-4 h-4 text-muted-foreground cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p>Hormones play a role—e.g., oil control for testosterone-driven 20s guys, hydration heroes for estrogen dips in women.</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <span onClick={(e) => e.preventDefault()}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Hormones play a role—e.g., oil control for testosterone-driven 20s guys, hydration heroes for estrogen dips in women.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </span>
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -379,7 +404,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     </Tooltip>
                   </FormLabel>
                   <FormControl>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
                       {[
                         { value: 'oily', label: 'Oily', icon: Droplets },
                         { value: 'dry', label: 'Dry', icon: Wind },
@@ -395,11 +420,11 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             key={type.value}
                             type="button"
                             variant={isSelected ? "default" : "outline"}
-                            className="min-h-[80px] flex flex-col items-center justify-center gap-2 px-2 py-3"
+                            className="min-h-[60px] sm:min-h-[80px] flex flex-col items-center justify-center gap-1 sm:gap-2 px-1 sm:px-2 py-2 sm:py-3"
                             onClick={() => field.onChange(type.value)}
                             data-testid={`button-skintype-${type.value}`}
                           >
-                            <Icon className="w-6 h-6" />
+                            <Icon className="w-4 h-4 sm:w-6 sm:h-6" />
                             <span className="text-xs sm:text-sm">{type.label}</span>
                           </Button>
                         );
@@ -428,7 +453,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     </Tooltip>
                   </FormLabel>
                   <FormControl>
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
                       {(['acne', 'fine-lines', 'dullness', 'redness', 'other'] as const).map((concern) => {
                         const isSelected = field.value?.includes(concern);
                         const isDisabled = !isSelected && (field.value?.length ?? 0) >= 2;
@@ -446,7 +471,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             type="button"
                             variant={isSelected ? "default" : "outline"}
                             size="lg"
-                            className="rounded-full min-h-11 px-6 text-base"
+                            className="rounded-full min-h-9 sm:min-h-11 px-4 sm:px-6 text-sm sm:text-base"
                             disabled={isDisabled}
                             onClick={() => {
                               const currentValues = field.value || [];
@@ -606,42 +631,65 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               </div>
             )}
 
-            {/* Behind the Scenes Accordion */}
-            <div className="mt-6">
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="behind-scenes" className="border-none">
-                  <AccordionTrigger className="text-base font-medium hover:no-underline text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      🌿
-                      Behind the Scenes: How We Make Magic for {environmentalData?.city || 'Your City'}
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-sm text-muted-foreground space-y-3 pt-2">
-                    <div className="flex gap-3">
-                      <Wind className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-foreground mb-1">Air Quality Index (AQI)</p>
-                        <p>We check pollution levels in your city. Higher AQI means more free radicals attacking your skin, so we recommend stronger antioxidants like vitamin C and niacinamide.</p>
+            {/* Behind the Scenes Accordion - Magic Section */}
+            {environmentalData && personalizedMagicText && (
+              <div className="mt-6">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="behind-scenes" className="border-none">
+                    <AccordionTrigger className="text-base font-medium hover:no-underline text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" />
+                        Behind the Scenes: How We Make Magic for {environmentalData.city} 🌆
                       </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <Sun className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-foreground mb-1">UV Index</p>
-                        <p>Your local sun intensity guides our sunscreen and protection recommendations. High UV? We'll suggest broad-spectrum SPF 50+ and antioxidants.</p>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-sm text-foreground space-y-4 pt-4">
+                      <div className="prose prose-sm max-w-none dark:prose-invert">
+                        {personalizedMagicText.split('\n').map((line, index) => {
+                          if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
+                            // Bold heading
+                            return (
+                              <h3 key={index} className="font-semibold text-base text-foreground mb-2 mt-4">
+                                {line.replace(/\*\*/g, '')}
+                              </h3>
+                            );
+                          } else if (line.trim().startsWith('- **')) {
+                            // Bullet point with bold
+                            const match = line.match(/- \*\*(.+?)\*\*:(.+)/);
+                            if (match) {
+                              return (
+                                <div key={index} className="flex gap-2 mb-3">
+                                  <span className="text-primary">•</span>
+                                  <p className="text-sm">
+                                    <span className="font-semibold text-foreground">{match[1]}:</span>
+                                    <span className="text-muted-foreground">{match[2]}</span>
+                                  </p>
+                                </div>
+                              );
+                            }
+                          } else if (line.trim().startsWith('- ')) {
+                            // Regular bullet point
+                            return (
+                              <div key={index} className="flex gap-2 mb-2">
+                                <span className="text-primary">•</span>
+                                <p className="text-sm text-muted-foreground">{line.substring(2)}</p>
+                              </div>
+                            );
+                          } else if (line.trim()) {
+                            // Regular paragraph
+                            return (
+                              <p key={index} className="text-sm text-muted-foreground">
+                                {line}
+                              </p>
+                            );
+                          }
+                          return null;
+                        })}
                       </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <Droplets className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-foreground mb-1">Humidity Levels</p>
-                        <p>Humidity affects how products absorb. High humidity? Lighter gels. Low humidity? Richer creams to lock in moisture.</p>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            )}
           </form>
         </Form>
       </CardContent>
