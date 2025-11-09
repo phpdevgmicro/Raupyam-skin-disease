@@ -62,7 +62,13 @@ export default function SkinAnalysis() {
     }
 
     sessionStorage.saveImages(images);
-    setStep("loading");
+    
+    // Use transition for smooth loading popup appearance
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setStep("loading");
+      setIsTransitioning(false);
+    }, 200);
 
     try {
       const results = await analyzeImages(images);
@@ -73,7 +79,7 @@ export default function SkinAnalysis() {
           recommendations: [],
           severity: "mild",
         });
-        setStep("results");
+        transitionToStep("results");
       } else {
         throw new Error(results.notice || "Analysis failed");
       }
@@ -87,7 +93,7 @@ export default function SkinAnalysis() {
             : "There was an error analyzing your images. Please try again.",
         variant: "destructive",
       });
-      setStep("upload");
+      transitionToStep("upload");
     }
   };
 
@@ -153,13 +159,6 @@ export default function SkinAnalysis() {
           <ProgressSteps
             currentStep={stepMapping[step]}
             steps={["Quick Profile", "Upload Image", "Results"]}
-            onStepClick={(stepNumber) => {
-              if (stepNumber === 1 && step !== "consent") {
-                transitionToStep("consent");
-              } else if (stepNumber === 2 && step === "results") {
-                transitionToStep("upload");
-              }
-            }}
           />
         )}
 

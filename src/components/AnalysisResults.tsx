@@ -77,23 +77,23 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
   return (
     <Card data-testid="card-analysis-results">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold flex items-center gap-3">
-          <Sparkles className="w-7 h-7 text-primary" />
+        <CardTitle className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+          <Sparkles className="w-8 h-8 text-primary" />
           AI Analysis Results
         </CardTitle>
-        <CardDescription className="mt-3 text-base">
+        <CardDescription className="mt-3 text-base md:text-lg text-foreground/70">
           Based on the images and information you provided
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-8">
+      <CardContent className="space-y-10">
         <div>
-          <h3 className="text-2xl font-bold mb-5 flex items-center gap-2">
-            <div className="w-1 h-6 bg-primary rounded-full" />
+          <h3 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-2">
+            <div className="w-1 h-7 bg-primary rounded-full" />
             Detailed Analysis
           </h3>
-          <div className="bg-muted/30 rounded-lg p-8">
+          <div className="bg-muted/30 rounded-lg p-6 md:p-8">
             <div
-              className="text-foreground leading-relaxed prose prose-base max-w-none dark:prose-invert [&_p]:text-base [&_p]:leading-7 [&_p]:mb-4 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-semibold [&_li]:text-base [&_li]:leading-7"
+              className="text-foreground leading-relaxed prose prose-base md:prose-lg max-w-none dark:prose-invert [&_p]:text-base [&_p]:md:text-lg [&_p]:leading-relaxed [&_p]:mb-5 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_li]:text-base [&_li]:md:text-lg [&_li]:leading-relaxed [&_li]:mb-2 [&_ul]:space-y-2 [&_ol]:space-y-2 [&_strong]:font-semibold [&_strong]:text-foreground"
               data-testid="text-analysis"
               dangerouslySetInnerHTML={{ __html: sanitizedAnalysis }}
             />
@@ -102,21 +102,21 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
 
         {results.recommendations.length > 0 && (
           <div className="pt-2">
-            <h3 className="text-2xl font-bold mb-5 flex items-center gap-2">
-              <div className="w-1 h-6 bg-primary rounded-full" />
+            <h3 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-2">
+              <div className="w-1 h-7 bg-primary rounded-full" />
               Recommendations
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-5">
               {results.recommendations.map((recommendation, index) => (
                 <div
                   key={index}
-                  className="flex items-start gap-4 bg-card border rounded-lg p-5 hover-elevate"
+                  className="flex items-start gap-5 bg-card border rounded-lg p-6 md:p-7 hover-elevate"
                   data-testid={`recommendation-${index}`}
                 >
-                  <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold text-lg">
+                  <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold text-lg md:text-xl">
                     {index + 1}
                   </div>
-                  <p className="text-base leading-7 flex-1 pt-1">
+                  <p className="text-base md:text-lg leading-relaxed flex-1 pt-1">
                     {recommendation}
                   </p>
                 </div>

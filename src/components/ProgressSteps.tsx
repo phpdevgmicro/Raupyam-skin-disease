@@ -25,10 +25,9 @@ export default function ProgressSteps({ currentStep, steps, onStepClick }: Progr
                       isCompleted
                         ? "bg-primary border-primary text-primary-foreground shadow-md"
                         : isActive
-                        ? "border-primary text-primary bg-primary/10 ring-2 ring-primary/20 ring-offset-2 animate-pulse shadow-lg"
+                        ? "border-primary text-primary bg-primary/10 ring-2 ring-primary/20 ring-offset-2 animate-gentle-pulse shadow-lg"
                         : "border-gray-300 dark:border-gray-600 text-muted-foreground"
-                    } ${isClickable ? "cursor-pointer hover-elevate" : ""}`}
-                    onClick={() => isClickable && onStepClick(stepNumber)}
+                    }`}
                     data-testid={`step-${stepNumber}`}
                   >
                     {isCompleted ? (
