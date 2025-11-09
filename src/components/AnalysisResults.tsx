@@ -1,9 +1,20 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle, AlertTriangle, Sparkles } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  AlertTriangle,
+  Sparkles,
+} from "lucide-react";
 import type { AnalysisResponse } from "@/types/schema";
-import DOMPurify from 'dompurify';
-import { useMemo } from 'react';
+import DOMPurify from "dompurify";
+import { useMemo } from "react";
 
 interface AnalysisResultsProps {
   results: AnalysisResponse;
@@ -12,8 +23,26 @@ interface AnalysisResultsProps {
 export default function AnalysisResults({ results }: AnalysisResultsProps) {
   const sanitizedAnalysis = useMemo(() => {
     return DOMPurify.sanitize(results.analysis, {
-      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'small', 'span', 'div'],
-      ALLOWED_ATTR: ['class'],
+      ALLOWED_TAGS: [
+        "p",
+        "br",
+        "strong",
+        "em",
+        "u",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "ul",
+        "ol",
+        "li",
+        "small",
+        "span",
+        "div",
+      ],
+      ALLOWED_ATTR: ["class"],
       KEEP_CONTENT: true,
       RETURN_TRUSTED_TYPE: false,
     });
@@ -63,8 +92,8 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
             Detailed Analysis
           </h3>
           <div className="bg-muted/30 rounded-lg p-8">
-            <div 
-              className="text-foreground leading-relaxed prose prose-base max-w-none dark:prose-invert [&_p]:text-base [&_p]:leading-7 [&_p]:mb-4 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-semibold [&_li]:text-base [&_li]:leading-7" 
+            <div
+              className="text-foreground leading-relaxed prose prose-base max-w-none dark:prose-invert [&_p]:text-base [&_p]:leading-7 [&_p]:mb-4 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-semibold [&_li]:text-base [&_li]:leading-7"
               data-testid="text-analysis"
               dangerouslySetInnerHTML={{ __html: sanitizedAnalysis }}
             />
@@ -87,7 +116,9 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
                   <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold text-lg">
                     {index + 1}
                   </div>
-                  <p className="text-base leading-7 flex-1 pt-1">{recommendation}</p>
+                  <p className="text-base leading-7 flex-1 pt-1">
+                    {recommendation}
+                  </p>
                 </div>
               ))}
             </div>

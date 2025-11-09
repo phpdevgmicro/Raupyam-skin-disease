@@ -51,6 +51,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   const [lastSubmittedAddress, setLastSubmittedAddress] = useState<string>(
     initialData?.address || ""
   );
+  const [lastGeocodedAddress, setLastGeocodedAddress] = useState<string>(
+    initialData?.address || ""
+  );
   const [environmentalData, setEnvironmentalData] = useState<{
     airQuality: AirQualityResponse | null;
     weather: WeatherResponse | null;
@@ -254,13 +257,17 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             };
             setCoordinates(coords);
             
-            // Fetch environmental data
-            const envData = await fetchEnvironmentalData(coords);
-            setEnvironmentalData({
-              airQuality: envData.airQuality,
-              weather: envData.weather,
-              city: city || state || country,
-            });
+            // Only fetch environmental data if address actually changed
+            if (place.formatted_address !== lastGeocodedAddress) {
+              setLastGeocodedAddress(place.formatted_address);
+              
+              const envData = await fetchEnvironmentalData(coords);
+              setEnvironmentalData({
+                airQuality: envData.airQuality,
+                weather: envData.weather,
+                city: city || state || country,
+              });
+            }
           }
           
           setAddressSelected(true);
@@ -348,6 +355,21 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   }, [form, initialData]);
 
   const handleFormSubmit = async (data: ConsentFormData) => {
+    // Validate that location fields are not empty
+    if (!data.city || !data.state || !data.country) {
+      form.setError("address", {
+        type: "manual",
+        message: "Please select a complete address with city, state, and country information"
+      });
+      toast({
+        title: "Incomplete location",
+        description: "Please select a complete address with city, state, and country information",
+        variant: "destructive",
+        duration: 4000,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -404,9 +426,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   };
 
   return (
-    <Card className="bg-[#f8f8f8] dark:bg-gray-900/50">
+    <Card className="bg-[#f8f8f8] dark:bg-gray-900/50 shadow-md">
       <CardHeader>
-        <CardTitle className="text-2xl">Your Skin Story Starter</CardTitle>
+        <CardTitle className="text-2xl md:text-3xl font-bold">Your Skin Story Starter</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -417,7 +439,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">What's the name behind that glow? 👋</FormLabel>
+                    <FormLabel className="text-base font-semibold">What's the name behind that glow? 👋</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Alex Rivera"
@@ -425,6 +447,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         autoComplete="off"
                         className="min-h-11 text-base"
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setAccordionOpen(undefined);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -437,10 +463,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="age"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-base">
+                    <FormLabel className="flex items-center gap-2 text-base font-semibold">
                       How many trips around the sun? 🌞
                       <span onClick={(e) => e.preventDefault()}>
-                        <Tooltip>
+                        <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>
                             <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                           </TooltipTrigger>
@@ -458,6 +484,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         autoComplete="off"
                         className="min-h-11 text-base"
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setAccordionOpen(undefined);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -471,10 +501,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
+                  <FormLabel className="flex items-center gap-2 text-base font-semibold">
                     Your vibe? (We keep it light—no judgments.) 💫
                     <span onClick={(e) => e.preventDefault()}>
-                      <Tooltip>
+                      <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
                           <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
@@ -485,7 +515,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     </span>
                   </FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setAccordionOpen(undefined);
+                    }}
                     defaultValue={field.value}
                     data-testid="select-gender"
                   >
@@ -511,9 +544,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               name="skinType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
+                  <FormLabel className="flex items-center gap-2 text-base font-semibold">
                     Your skin's mood today? (Flaky rebel or oily adventurer?) 🧴
-                    <Tooltip>
+                    <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
                         <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                       </TooltipTrigger>
@@ -540,7 +573,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             type="button"
                             variant={isSelected ? "default" : "outline"}
                             className="min-h-[60px] sm:min-h-[80px] flex flex-col items-center justify-center gap-1 sm:gap-2 px-1 sm:px-2 py-2 sm:py-3"
-                            onClick={() => field.onChange(type.value)}
+                            onClick={() => {
+                              field.onChange(type.value);
+                              setAccordionOpen(undefined);
+                            }}
                             data-testid={`button-skintype-${type.value}`}
                           >
                             <Icon className="w-4 h-4 sm:w-6 sm:h-6" />
@@ -560,9 +596,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               name="topConcern"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
+                  <FormLabel className="flex items-center gap-2 text-base font-semibold">
                     What's bugging your glow most? (Pick 1-2—we've got fixes.) 🔥
-                    <Tooltip>
+                    <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
                         <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                       </TooltipTrigger>
@@ -599,6 +635,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                               } else if (currentValues.length < 2) {
                                 field.onChange([...currentValues, concern]);
                               }
+                              setAccordionOpen(undefined);
                             }}
                             data-testid={`badge-concern-${concern}`}
                           >
@@ -618,7 +655,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
+                  <FormLabel className="flex items-center gap-2 text-base font-semibold">
                     <MapPin className="w-4 h-4" />
                     Address *
                   </FormLabel>
@@ -630,6 +667,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       className="min-h-11 text-base"
                       {...field}
                       ref={addressInputRef}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setAccordionOpen(undefined);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -643,38 +684,19 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">City *</FormLabel>
+                    <FormLabel className="text-base font-semibold">City *</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
-                          placeholder="Enter city"
+                          placeholder="Select address to auto-fill"
                           data-testid="input-city"
                           autoComplete="off"
                           {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            if (addressSelected) {
-                              setAddressSelected(false);
-                              setEnvironmentalData(null);
-                            }
-                          }}
-                          className="min-h-11 text-base pr-10"
+                          readOnly
+                          className="min-h-11 text-base pr-10 bg-muted/30"
                         />
                         {field.value && (
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
-                            onClick={() => {
-                              field.onChange("");
-                              setAddressSelected(false);
-                              setEnvironmentalData(null);
-                            }}
-                            data-testid="button-clear-city"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
+                          <MapPin className="w-4 h-4 text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2" />
                         )}
                       </div>
                     </FormControl>
@@ -688,21 +710,15 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="state"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">State *</FormLabel>
+                    <FormLabel className="text-base font-semibold">State *</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter state"
+                        placeholder="Select address to auto-fill"
                         data-testid="input-state"
                         autoComplete="off"
                         {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          if (addressSelected) {
-                            setAddressSelected(false);
-                            setEnvironmentalData(null);
-                          }
-                        }}
-                        className="min-h-11 text-base"
+                        readOnly
+                        className="min-h-11 text-base bg-muted/30"
                       />
                     </FormControl>
                     <FormMessage />
@@ -715,21 +731,15 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">Country *</FormLabel>
+                    <FormLabel className="text-base font-semibold">Country *</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter country"
+                        placeholder="Select address to auto-fill"
                         data-testid="input-country"
                         autoComplete="off"
                         {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          if (addressSelected) {
-                            setAddressSelected(false);
-                            setEnvironmentalData(null);
-                          }
-                        }}
-                        className="min-h-11 text-base"
+                        readOnly
+                        className="min-h-11 text-base bg-muted/30"
                       />
                     </FormControl>
                     <FormMessage />
@@ -739,7 +749,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             </div>
 
             {/* Auto-detected Location Message */}
-            {environmentalData && environmentalData.city && (
+            {address && environmentalData && environmentalData.city && (
               <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
@@ -890,7 +900,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
           type="submit"
           onClick={form.handleSubmit(handleFormSubmit)}
           size="lg"
-          className="w-full px-8 h-12 group"
+          className="w-full px-8 min-h-12 md:h-14 group shadow-lg hover:shadow-xl transition-shadow duration-300"
           data-testid="button-submit-consent"
           disabled={isSubmitting}
         >

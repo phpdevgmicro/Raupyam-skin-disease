@@ -62,7 +62,7 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
       {!image ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card
-            className="hover-elevate cursor-pointer border-2 border-dashed transition-colors hover:border-primary/50"
+            className="hover-elevate cursor-pointer border-2 border-dashed transition-colors hover:border-primary/50 shadow-md"
             onClick={() => fileInputRef.current?.click()}
             data-testid="card-upload-file"
           >
@@ -81,7 +81,7 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
           </Card>
 
           <Card
-            className="hover-elevate cursor-pointer border-2 border-dashed transition-colors hover:border-primary/50"
+            className="hover-elevate cursor-pointer border-2 border-dashed transition-colors hover:border-primary/50 shadow-md"
             onClick={() => setShowCamera(true)}
             data-testid="card-upload-camera"
           >
@@ -101,7 +101,7 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
         </div>
       ) : (
         <div className="space-y-4">
-          <Card className="relative overflow-hidden">
+          <Card className="relative overflow-hidden shadow-lg">
             <CardContent className="p-0">
               <div className="relative w-full" style={{ height: 'calc(100vh - 400px)', minHeight: '500px', maxHeight: '800px' }}>
                 <img
@@ -137,7 +137,7 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
                     <Button
                       size="lg"
                       onClick={onStartAnalysis}
-                      className="w-full h-14 bg-[#34a853] hover:bg-[#2d8e47] text-white font-semibold gap-2 shadow-lg text-base"
+                      className="w-full min-h-12 md:h-14 bg-[#34a853] hover:bg-[#2d8e47] text-white font-semibold gap-2 shadow-lg hover:shadow-xl transition-shadow duration-300 text-base"
                       data-testid="button-start-analysis"
                     >
                       <Sparkles className="w-5 h-5" />

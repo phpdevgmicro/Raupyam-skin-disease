@@ -140,11 +140,11 @@ export default function SkinAnalysis() {
       <Header />
 
       <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="text-center mb-6 md:mb-8">
-          <h2 className="text-xl md:text-2xl font-semibold text-foreground">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-4">
             {taglineContent.title}
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground mt-2 max-w-3xl mx-auto">
+          <p className="text-base md:text-lg lg:text-xl text-foreground/80 mt-2 max-w-3xl mx-auto leading-relaxed">
             {taglineContent.description}
           </p>
         </div>
@@ -202,7 +202,7 @@ export default function SkinAnalysis() {
                   size="lg"
                   onClick={handleStartOver}
                   data-testid="button-start-over"
-                  className="bg-[#353535] hover:bg-[#252525] text-white font-medium px-12 h-12 transition-colors duration-200"
+                  className="bg-[#353535] hover:bg-[#252525] text-white font-medium px-12 min-h-12 md:h-14 shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   Start New Analysis
                 </Button>

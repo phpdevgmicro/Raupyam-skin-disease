@@ -21,24 +21,24 @@ export default function ProgressSteps({ currentStep, steps, onStepClick }: Progr
               <div key={index} className="flex items-start" style={{ flex: index < steps.length - 1 ? '1' : '0 0 auto' }}>
                 <div className="flex flex-col items-center">
                   <div
-                    className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ease-in-out z-10 bg-background ${
+                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-300 ease-in-out z-10 bg-background ${
                       isCompleted
-                        ? "bg-primary border-primary text-primary-foreground"
+                        ? "bg-primary border-primary text-primary-foreground shadow-md"
                         : isActive
-                        ? "border-primary text-primary bg-primary/10 ring-2 ring-primary/20 ring-offset-2"
+                        ? "border-primary text-primary bg-primary/10 ring-2 ring-primary/20 ring-offset-2 animate-pulse shadow-lg"
                         : "border-gray-300 dark:border-gray-600 text-muted-foreground"
                     } ${isClickable ? "cursor-pointer hover-elevate" : ""}`}
                     onClick={() => isClickable && onStepClick(stepNumber)}
                     data-testid={`step-${stepNumber}`}
                   >
                     {isCompleted ? (
-                      <Check className="w-5 h-5 md:w-6 md:h-6 animate-in fade-in zoom-in duration-300" />
+                      <Check className="w-6 h-6 md:w-7 md:h-7 animate-in fade-in zoom-in duration-300" />
                     ) : (
-                      <span className="font-semibold text-sm md:text-base">{stepNumber}</span>
+                      <span className="font-bold text-base md:text-lg">{stepNumber}</span>
                     )}
                   </div>
                   <span
-                    className={`text-xs md:text-sm mt-2 text-center font-medium transition-colors duration-200 whitespace-nowrap ${
+                    className={`text-sm md:text-base mt-3 text-center font-semibold transition-colors duration-200 whitespace-nowrap ${
                       isActive || isCompleted ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
