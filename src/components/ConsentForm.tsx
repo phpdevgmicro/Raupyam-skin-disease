@@ -28,7 +28,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { MapPin, Loader2, Info, Droplets, Wind, Heart, Zap, Sun, Cloud, ArrowRight, CheckCircle2, Lock, X } from "lucide-react";
+import { MapPin, Loader2, Info, Droplets, Wind, Heart, Zap, Sun, Cloud, ArrowRight, CheckCircle2, Lock, X, Sparkles } from "lucide-react";
 import { BulletIcon } from "@/components/BulletIcon";
 import { fetchEnvironmentalData, detectLocationFromIP, type Coordinates, type AirQualityResponse, type WeatherResponse } from "@/lib/googleApis";
 import { sessionStorage } from "@/lib/sessionStorage";
@@ -675,7 +675,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       {[
                         { value: 'oily', label: 'Oily', icon: Droplets },
                         { value: 'dry', label: 'Dry', icon: Wind },
-                        { value: 'combination', label: 'Combo', icon: BulletIcon },
+                        { value: 'combination', label: 'Combo', icon: Sparkles },
                         { value: 'sensitive', label: 'Sensitive', icon: Heart },
                         { value: 'normal', label: 'Normal', icon: Zap },
                       ].map((type) => {
@@ -898,10 +898,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               <div className="mt-6">
                 <Accordion type="single" collapsible className="w-full" value={accordionOpen} onValueChange={handleAccordionChange}>
                   <AccordionItem value="behind-scenes" className="border-none">
-                    <AccordionTrigger className="text-lg md:text-xl hover:no-underline text-customText">
+                    <AccordionTrigger className="text-lg md:text-xl hover:no-underline text-customText px-0">
                       <div className="flex items-start justify-between gap-2 flex-1 text-left">
-                        <div className="flex gap-3 text-[1.1rem]">
-                          <BulletIcon className="md:w-4 md:h-4 w-8 h-8 mt-0 md:mt-2" />
+                        <div className="text-[1.1rem]">
                           <span className="font-semibold">Behind the Scenes:</span> <span className="font-normal">How We Make Magic for {effectiveLocation}</span>
                         </div>
                         {isPersonalizationReady ? (
@@ -920,27 +919,22 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     <AccordionContent className="text-base text-customText/90 space-y-5 pt-6">
                       {!isPersonalizationReady ? (
                         <div className="space-y-4 p-5 bg-muted/30 rounded-lg border border-muted">
-                          <div className="flex items-start gap-3">
-                            <Lock className="w-6 h-6 text-muted-foreground mt-0.5 flex-shrink-0" />
-                            <div className="space-y-3 flex-1">
-                              <p className="font-semibold text-lg text-customText">
-                                Complete your profile to unlock personalized magic!
-                              </p>
-                              <p className="text-base text-customText/70 leading-relaxed">
-                                We need a bit more info to craft your perfect skincare experience:
-                              </p>
-                              <div className="mt-4 space-y-3 pl-0">
-                                {missingFields.map((field, index) => {
-                                  const Icon = field.icon;
-                                  return (
-                                    <div key={index} className="flex items-center gap-3 text-base">
-                                      <Icon className="w-5 h-5 text-primary" />
-                                      <span className="text-customText/80">{field.label}</span>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
+                          <p className="font-semibold text-lg text-customText">
+                            Complete your profile to unlock personalized magic!
+                          </p>
+                          <p className="text-base text-customText/70 leading-relaxed">
+                            We need a bit more info to craft your perfect skincare experience:
+                          </p>
+                          <div className="mt-4 space-y-3 pl-0">
+                            {missingFields.map((field, index) => {
+                              const Icon = field.icon;
+                              return (
+                                <div key={index} className="flex items-center gap-3 text-base">
+                                  <Icon className="w-5 h-5 text-primary" />
+                                  <span className="text-customText/80">{field.label}</span>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       ) : isLoadingMagicText ? (
