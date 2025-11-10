@@ -153,7 +153,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   // Auto-close accordion when profile changes (fixes timing issues with controlled Radix component)
   useEffect(() => {
     const currentHash = generateProfileHash();
-    
+
     // If profile hash changed and we have cached data, reset personalization state
     if (cachedProfileHash && cachedProfileHash !== currentHash) {
       setPersonalizedMagicText(null);
@@ -162,13 +162,13 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       setIsManuallyOpened(false);
     }
   }, [age, gender, skinType, topConcern, effectiveLocation, environmentalData, generateProfileHash, cachedProfileHash]);
-  
+
   // Centralized handler for form field changes - clears cached data and closes accordion
   const handleFormFieldChange = useCallback(() => {
     // Always clear cached personalization when fields change
     setPersonalizedMagicText(null);
     setCachedProfileHash(null);
-    
+
     // Always close accordion when any field is filled so user reopens to fetch fresh data
     setAccordionOpen("");
     setIsManuallyOpened(false);
@@ -177,21 +177,21 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   // Extracted fetch logic for personalization
   const fetchMagicText = useCallback(async () => {
     const currentHash = generateProfileHash();
-    
+
     // Skip if we already have cached result for this exact profile
     if (cachedProfileHash === currentHash && personalizedMagicText) {
       return;
     }
-    
+
     // Increment request token to invalidate any in-flight requests
     const thisRequestToken = ++requestTokenRef.current;
-    
+
     setIsLoadingMagicText(true);
-    
+
     try {
       // Use effective location and only include env data if it matches
       const useEnvData = effectiveLocation === environmentalData?.city;
-      
+
       const personalizationData = formatPersonalizationData(
         { age, gender, skinType, topConcern },
         effectiveLocation || "your area",
@@ -200,21 +200,21 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       );
 
       const response = await getPersonalizedMagicText(personalizationData);
-      
+
       // Ignore response if a newer request has been made
       if (thisRequestToken !== requestTokenRef.current) {
         return;
       }
-      
+
       if (response.personalizedText) {
         setPersonalizedMagicText(response.personalizedText);
         setCachedProfileHash(currentHash);
-        
+
         // Show a friendly notice if environmental data is missing or not being used
         if (!useEnvData) {
           toast({
             title: "Using generic recommendations",
-            description: effectiveLocation === environmentalData?.city 
+            description: effectiveLocation === environmentalData?.city
               ? "We couldn't fetch live environmental data, but we've still crafted personalized insights for you!"
               : "Using your manually entered location with general recommendations. For live AQI and weather data, select from autocomplete.",
             duration: 5000,
@@ -232,12 +232,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       }
     } catch (error) {
       console.error('Error fetching personalized text:', error);
-      
+
       // Ignore errors from stale requests
       if (thisRequestToken !== requestTokenRef.current) {
         return;
       }
-      
+
       setPersonalizedMagicText(null);
       toast({
         title: "Something went wrong",
@@ -256,25 +256,25 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   // Handle accordion toggle - fetch personalized magic when opened
   const handleAccordionChange = async (value: string | undefined) => {
     setAccordionOpen(value);
-    
+
     // Track if user manually opened the accordion
     if (value === "behind-scenes") {
       setIsManuallyOpened(true);
     } else {
       setIsManuallyOpened(false);
     }
-    
+
     // Only fetch when accordion opens and profile is ready
     if (value === "behind-scenes" && isPersonalizationReady) {
       fetchMagicText();
     }
   };
-  
+
   // Auto-refetch when accordion is open and profile data changes
   useEffect(() => {
     if (
-      accordionOpen === "behind-scenes" && 
-      isPersonalizationReady && 
+      accordionOpen === "behind-scenes" &&
+      isPersonalizationReady &&
       !personalizedMagicText &&
       !isLoadingMagicText  // Prevent duplicate requests while one is in flight
     ) {
@@ -282,7 +282,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       const timeoutId = setTimeout(() => {
         fetchMagicText();
       }, 500);
-      
+
       return () => clearTimeout(timeoutId);
     }
   }, [accordionOpen, isPersonalizationReady, personalizedMagicText, isLoadingMagicText, generateProfileHash, fetchMagicText]);
@@ -321,7 +321,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
           form.setValue("city", city, { shouldValidate: true });
           form.setValue("state", state, { shouldValidate: true });
           form.setValue("country", country, { shouldValidate: true });
-          
+
           // Validate that required address fields are present
           if (!city || !state || !country) {
             // Clear the address if incomplete
@@ -330,7 +330,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             form.setValue("state", "", { shouldValidate: false });
             form.setValue("country", "", { shouldValidate: false });
             setAddressSelected(false);
-            
+
             toast({
               title: "Incomplete Address",
               description: "The selected address is missing some required details (city, state, or country). Please type a more complete address and select from the suggestions.",
@@ -339,21 +339,21 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             });
             return;
           }
-          
+
           // Reset magic section when location changes
           handleFormFieldChange();
-          
+
           if ((place as any).geometry?.location) {
             const coords = {
               lat: (place as any).geometry.location.lat(),
               lng: (place as any).geometry.location.lng(),
             };
             setCoordinates(coords);
-            
+
             // Only fetch environmental data if address actually changed
             if (place.formatted_address !== lastGeocodedAddress) {
               setLastGeocodedAddress(place.formatted_address);
-              
+
               const envData = await fetchEnvironmentalData(coords);
               setEnvironmentalData({
                 airQuality: envData.airQuality,
@@ -362,7 +362,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               });
             }
           }
-          
+
           setAddressSelected(true);
         }
       });
@@ -376,12 +376,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       }
 
       const savedAutoLocation = sessionStorage.getAutoLocation();
-      
+
       if (savedAutoLocation) {
         const synthesizedAddress = [savedAutoLocation.city, savedAutoLocation.state, savedAutoLocation.country]
           .filter(Boolean)
           .join(", ");
-        
+
         form.setValue("address", synthesizedAddress, { shouldValidate: false });
         form.setValue("city", savedAutoLocation.city, { shouldValidate: false });
         form.setValue("state", savedAutoLocation.state, { shouldValidate: false });
@@ -397,18 +397,18 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       }
 
       setIsAutoDetecting(true);
-      
+
       try {
         const location = await detectLocationFromIP();
-        
+
         if (location) {
           const coords = {
             lat: location.latitude,
             lng: location.longitude,
           };
-          
+
           const envData = await fetchEnvironmentalData(coords);
-          
+
           const autoLocationData = {
             city: location.city,
             state: location.region,
@@ -418,13 +418,13 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             weather: envData.weather,
             detectedAt: new Date().toISOString(),
           };
-          
+
           sessionStorage.saveAutoLocation(autoLocationData);
-          
+
           const synthesizedAddress = [location.city, location.region, location.country]
             .filter(Boolean)
             .join(", ");
-          
+
           form.setValue("address", synthesizedAddress, { shouldValidate: false });
           form.setValue("city", location.city, { shouldValidate: false });
           form.setValue("state", location.region, { shouldValidate: false });
@@ -471,7 +471,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
     try {
       const patientData = coordinates ? { ...data, coordinates } : data;
-      
+
       sessionStorage.savePatientData(patientData);
 
       // Only save environmental data if we already have it (from auto-detection or address selection)
@@ -501,11 +501,11 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       onSubmit(patientData as ConsentFormData);
     } catch (error) {
       console.error('Form submission error:', error);
-      
-      const errorMessage = error instanceof Error 
-        ? error.message 
+
+      const errorMessage = error instanceof Error
+        ? error.message
         : "There was an error processing your information. Please try again.";
-      
+
       toast({
         title: "Error",
         description: errorMessage.includes('storage') || errorMessage.includes('quota')
@@ -538,7 +538,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         placeholder="Alex Rivera"
                         data-testid="input-fullname"
                         autoComplete="off"
-                        className="min-h-11 text-base"
+                        className="min-h-11 text-base mt-15"
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
@@ -641,7 +641,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     Your skin's mood today? (Flaky rebel or oily adventurer?) 🧴
                     <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
-                        <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                        <Info className="w-4 h-4 text-muted-foreground cursor-help big-width" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
                         <p>This fine-tunes emulsions—e.g., lightweight gels for oily types in humid climate.</p>
@@ -649,7 +649,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     </Tooltip>
                   </FormLabel>
                   <FormControl>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-3">
                       {[
                         { value: 'oily', label: 'Oily', icon: Droplets },
                         { value: 'dry', label: 'Dry', icon: Wind },
@@ -659,7 +659,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       ].map((type) => {
                         const Icon = type.icon;
                         const isSelected = field.value === type.value;
-                        
+
                         return (
                           <Button
                             key={type.value}
@@ -693,7 +693,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     What's bugging your glow most? (Pick 1-2—we've got fixes.) 🔥
                     <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
-                        <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                        <Info className="w-4 h-4 text-muted-foreground cursor-help big-width" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
                         <p>Zeroes in on heroes like bakuchiol for lines or niacinamide for redness, synced to your water quality.</p>
@@ -712,7 +712,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           'redness': 'Redness',
                           'other': 'Other'
                         };
-                        
+
                         return (
                           <Button
                             key={concern}
@@ -845,8 +845,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             {address && environmentalData && environmentalData.city && (
               <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-foreground">
+                  <MapPin className="w-5 h-5 text-primary mt-[.12rem] flex-shrink-0" />
+                  <p className="text-sm text-customText line-height-less">
                     <span className="font-semibold">We grabbed {environmentalData.city}</span>
                     {environmentalData.airQuality?.aqi !== undefined && environmentalData.airQuality?.aqi !== null && (
                       <>
@@ -861,8 +861,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     {environmentalData.weather?.humidity !== undefined && environmentalData.weather?.humidity !== null && (
                       <>
                         {' '}
-                        {environmentalData.weather.humidity > 70 
-                          ? "We'll soften formulas to avoid that tight feeling." 
+                        {environmentalData.weather.humidity > 70
+                          ? "We'll soften formulas to avoid that tight feeling."
                           : "Humidity here? We'll balance your routine perfectly."}
                       </>
                     )}
@@ -876,35 +876,35 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               <div className="mt-6">
                 <Accordion type="single" collapsible className="w-full" value={accordionOpen} onValueChange={handleAccordionChange}>
                   <AccordionItem value="behind-scenes" className="border-none">
-                    <AccordionTrigger className="text-lg md:text-xl font-semibold hover:no-underline text-foreground">
-                      <div className="flex items-center justify-between gap-2 flex-1">
-                        <div className="flex items-center gap-2">
-                          <Sparkles className="w-5 h-5" />
+                    <AccordionTrigger className="text-lg md:text-xl font-semibold hover:no-underline text-customText">
+                      <div className="flex items-start justify-between gap-2 flex-1 text-left">
+                        <div className="flex gap-3 text-[1.1rem]">
+                          <Sparkles className="md:w-4 md:h-4 w-8 h-8 mt-0 md:mt-2" />
                           Behind the Scenes: How We Make Magic for {effectiveLocation}
                         </div>
                         {isPersonalizationReady ? (
-                          <Badge variant="default" className="ml-2 gap-1 text-xs">
+                          <Badge variant="default" className="ml-2 gap-1 text-xs md:top-[.3rem] top-[.4rem] ready-badge">
                             <CheckCircle2 className="w-3 h-3" />
                             Ready!
                           </Badge>
                         ) : (
-                          <Badge variant="secondary" className="ml-2 gap-1 text-xs">
+                          <Badge variant="secondary" className="ml-2 gap-1 text-xs md:top-[.2rem] top-[.3rem]">
                             <Lock className="w-3 h-3" />
                             {5 - missingFields.length}/5
                           </Badge>
                         )}
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="text-base text-foreground/90 space-y-5 pt-6">
+                    <AccordionContent className="text-base text-customText/90 space-y-5 pt-6">
                       {!isPersonalizationReady ? (
                         <div className="space-y-4 p-5 bg-muted/30 rounded-lg border border-muted">
                           <div className="flex items-start gap-3">
                             <Lock className="w-6 h-6 text-muted-foreground mt-0.5 flex-shrink-0" />
                             <div className="space-y-3 flex-1">
-                              <p className="font-semibold text-lg text-foreground">
+                              <p className="font-semibold text-lg text-customText">
                                 Complete your profile to unlock personalized magic!
                               </p>
-                              <p className="text-base text-foreground/70 leading-relaxed">
+                              <p className="text-base text-customText/70 leading-relaxed">
                                 We need a bit more info to craft your perfect skincare experience:
                               </p>
                               <div className="mt-4 space-y-3">
@@ -913,7 +913,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                                   return (
                                     <div key={index} className="flex items-center gap-3 text-base">
                                       <Icon className="w-5 h-5 text-primary" />
-                                      <span className="text-foreground/80">{field.label}</span>
+                                      <span className="text-customText/80">{field.label}</span>
                                     </div>
                                   );
                                 })}
@@ -927,7 +927,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             <Loader2 className="w-12 h-12 animate-spin text-primary" />
                             <Sparkles className="w-5 h-5 text-primary absolute -top-1 -right-1 animate-pulse" />
                           </div>
-                          <p className="text-base md:text-lg text-foreground/70 animate-pulse text-center">
+                          <p className="text-base md:text-lg text-customText/70 animate-pulse text-center">
                             Crafting your personalized magic...
                           </p>
                         </div>
@@ -937,7 +937,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
                             // Bold heading
                             return (
-                              <h3 key={index} className="font-bold text-lg md:text-xl text-foreground mb-3 mt-4 first:mt-0">
+                              <h3 key={index} className="font-bold text-lg md:text-xl text-customText mb-3 mt-4 first:mt-0">
                                 {line.replace(/\*\*/g, '')}
                               </h3>
                             );
@@ -949,8 +949,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                                 <div key={index} className="flex items-start gap-3 mb-2 pl-1">
                                   <span className="text-primary text-base font-bold mt-0.5 flex-shrink-0">•</span>
                                   <p className="text-base leading-snug flex-1">
-                                    <span className="font-semibold text-foreground">{match[1]}:</span>
-                                    <span className="text-foreground/80">{match[2]}</span>
+                                    <span className="font-semibold text-customText">{match[1]}:</span>
+                                    <span className="text-customText/80">{match[2]}</span>
                                   </p>
                                 </div>
                               );
@@ -960,13 +960,13 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             return (
                               <div key={index} className="flex items-start gap-3 mb-2 pl-1">
                                 <span className="text-primary text-base font-bold mt-0.5 flex-shrink-0">•</span>
-                                <p className="text-base text-foreground/80 leading-snug flex-1">{line.substring(2)}</p>
+                                <p className="text-base text-customText/80 leading-snug flex-1">{line.substring(2)}</p>
                               </div>
                             );
                           } else if (line.trim()) {
                             // Regular paragraph
                             return (
-                              <p key={index} className="text-base text-foreground/80 leading-normal mb-2">
+                              <p key={index} className="text-base text-customText/80 leading-normal mb-2">
                                 {line}
                               </p>
                             );
@@ -975,7 +975,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         })}
                         </div>
                       ) : (
-                        <p className="text-base text-foreground/70 text-center py-6">
+                        <p className="text-base text-customText/70 text-center py-6">
                           Something went wrong. Please try again.
                         </p>
                       )}
@@ -988,12 +988,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         </Form>
       </CardContent>
 
-      <div className="px-6 pb-6 space-y-4">
+      <div className="px-6 pb-6 space-y-4 mb-2">
         <Button
           type="submit"
           onClick={form.handleSubmit(handleFormSubmit)}
           size="lg"
-          className="w-full px-8 min-h-12 md:h-14 group shadow-lg hover:shadow-xl transition-shadow duration-300"
+          className="w-full px-8 min-h-12 md:h-14 group shadow-lg hover:shadow-xl transition-shadow duration-300 text-[16px] md:text-[18px]"
           data-testid="button-submit-consent"
           disabled={isSubmitting}
         >
@@ -1012,8 +1012,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
         {/* Fun Fact Footer */}
         <div className="text-center text-sm text-muted-foreground italic">
-          <span className="inline-flex items-center gap-2">
-            <Sparkles className="w-4 h-4" />
+          <span className="flex mt-5 line-height-less">
+            <Sparkles className="md:w-5 md:h-5 md:mt-[.19rem] mt-[-3px] w-8 h-8" />
             Fun fact: 92% of globe-trotters like you unlocked brighter vibes in 2 weeks. Your move? (Data's vaulted—promise.)
           </span>
         </div>

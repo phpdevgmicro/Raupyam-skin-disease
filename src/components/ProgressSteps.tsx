@@ -38,7 +38,7 @@ export default function ProgressSteps({ currentStep, steps, onStepClick }: Progr
                   </div>
                   <span
                     className={`text-sm md:text-base mt-3 text-center font-semibold transition-colors duration-200 whitespace-nowrap ${
-                      isActive || isCompleted ? "text-foreground" : "text-muted-foreground"
+                      isActive || isCompleted ? "text-customText" : "text-muted-foreground"
                     }`}
                   >
                     {step}

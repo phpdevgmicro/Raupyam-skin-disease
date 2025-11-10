@@ -81,7 +81,7 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
           <Sparkles className="w-8 h-8 text-primary" />
           AI Analysis Results
         </CardTitle>
-        <CardDescription className="mt-3 text-base md:text-lg text-foreground/70">
+        <CardDescription className="mt-3 text-base md:text-lg text-customText/70">
           Based on the images and information you provided
         </CardDescription>
       </CardHeader>
@@ -93,7 +93,7 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
           </h3>
           <div className="bg-muted/30 rounded-lg p-6 md:p-8">
             <div
-              className="text-foreground leading-relaxed prose prose-base md:prose-lg max-w-none dark:prose-invert [&_p]:text-base [&_p]:md:text-lg [&_p]:leading-relaxed [&_p]:mb-5 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_li]:text-base [&_li]:md:text-lg [&_li]:leading-relaxed [&_li]:mb-2 [&_ul]:space-y-2 [&_ol]:space-y-2 [&_strong]:font-semibold [&_strong]:text-foreground [&_span]:text-base [&_span]:md:text-lg [&_span]:leading-relaxed [&_small]:text-sm [&_small]:leading-relaxed [&_em]:text-base [&_em]:md:text-lg [&_u]:text-base [&_u]:md:text-lg [&_div]:text-base [&_div]:md:text-lg [&_div]:leading-relaxed"
+              className="text-customText leading-relaxed prose prose-base md:prose-lg max-w-none dark:prose-invert [&_p]:text-base [&_p]:md:text-lg [&_p]:leading-relaxed [&_p]:mb-5 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_li]:text-base [&_li]:md:text-lg [&_li]:leading-relaxed [&_li]:mb-2 [&_ul]:space-y-2 [&_ol]:space-y-2 [&_strong]:font-semibold [&_strong]:text-customText [&_span]:text-base [&_span]:md:text-lg [&_span]:leading-relaxed [&_small]:text-sm [&_small]:leading-relaxed [&_em]:text-base [&_em]:md:text-lg [&_u]:text-base [&_u]:md:text-lg [&_div]:text-base [&_div]:md:text-lg [&_div]:leading-relaxed"
               style={{ fontFamily: 'var(--font-body)' }}
               data-testid="text-analysis"
               dangerouslySetInnerHTML={{ __html: sanitizedAnalysis }}

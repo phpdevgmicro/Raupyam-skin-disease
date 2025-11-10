@@ -110,7 +110,7 @@ export default function FeedbackForm() {
         <Button
           type="submit"
           onClick={form.handleSubmit(onSubmit)}
-          className="px-6 h-12"
+          className="px-6 h-12 text-lg"
           data-testid="button-submit-feedback"
           disabled={isPending}
         >
