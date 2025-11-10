@@ -63,7 +63,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   const [personalizedMagicText, setPersonalizedMagicText] = useState<string | null>(null);
   const [isLoadingMagicText, setIsLoadingMagicText] = useState(false);
   const [cachedProfileHash, setCachedProfileHash] = useState<string | null>(null);
-  const [accordionOpen, setAccordionOpen] = useState<string | undefined>(undefined);
+  const [accordionOpen, setAccordionOpen] = useState<string>("");
   const [isManuallyOpened, setIsManuallyOpened] = useState(false);
   const requestTokenRef = useRef(0);
   const { toast } = useToast();
@@ -150,17 +150,29 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     });
   }, [age, gender, skinType, topConcern, effectiveLocation, environmentalData]);
 
-  // Centralized handler for form field changes - clears cached data but keeps accordion open if manually opened
+  // Auto-close accordion when profile changes (fixes timing issues with controlled Radix component)
+  useEffect(() => {
+    const currentHash = generateProfileHash();
+    
+    // If profile hash changed and we have cached data, reset personalization state
+    if (cachedProfileHash && cachedProfileHash !== currentHash) {
+      setPersonalizedMagicText(null);
+      setCachedProfileHash(null);
+      setAccordionOpen("");
+      setIsManuallyOpened(false);
+    }
+  }, [age, gender, skinType, topConcern, effectiveLocation, environmentalData, generateProfileHash, cachedProfileHash]);
+  
+  // Centralized handler for form field changes - clears cached data and closes accordion
   const handleFormFieldChange = useCallback(() => {
     // Always clear cached personalization when fields change
     setPersonalizedMagicText(null);
     setCachedProfileHash(null);
     
-    // Only close accordion if it wasn't manually opened by user
-    if (!isManuallyOpened) {
-      setAccordionOpen(undefined);
-    }
-  }, [isManuallyOpened]);
+    // Always close accordion when any field is filled so user reopens to fetch fresh data
+    setAccordionOpen("");
+    setIsManuallyOpened(false);
+  }, []);
 
   // Extracted fetch logic for personalization
   const fetchMagicText = useCallback(async () => {

@@ -20,8 +20,8 @@ export default function AnalysisLoading() {
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-300">
-      <Card className="max-w-md w-full mx-4 shadow-lg">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <Card className="max-w-md w-full mx-4 shadow-lg animate-in zoom-in-95 duration-200">
         <CardContent className="flex flex-col items-center justify-center py-12 md:py-16 px-6">
           <div className="relative mb-8" data-testid="loading-spinner">
             <div className="w-24 h-24 md:w-28 md:h-28 border-8 border-gray-200 dark:border-gray-700 rounded-full"></div>

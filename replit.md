@@ -42,9 +42,15 @@ The application guides users through a multi-step process:
 ### Design System
 
 **Color Palette**: Neutral-based with primary blue, semantic colors for severity (green, yellow, red), and a dark charcoal text based on Raupyam branding.
+**Typography**: Main UI uses "Onest" sans-serif, analysis results use "DM Sans" sans-serif for readability.
 **Component Patterns**: Cards with rounded corners, buttons with elevation, 44px height for form inputs, and progressive disclosure.
 **Responsive Design**: Mobile-first approach with desktop enhancements at `md` breakpoint (768px).
-**UX Enhancements**: Icon-based skin type selector, pill-style multi-select for concerns (2-item max), and increased touch targets/spacing for mobile accessibility.
+**UX Enhancements**: 
+- Icon-based skin type selector
+- Pill-style multi-select for concerns (2-item max)
+- Increased touch targets/spacing for mobile accessibility (44px+ tap targets)
+- Snappy loading animations (200ms zoom-in)
+- Auto-closing "Personalize Magic" accordion when form fields change (prevents stale data)
 **HTML-Formatted AI Responses**: Analysis results are rendered as HTML, sanitized with DOMPurify, and styled using Tailwind Typography.
 
 ## External Dependencies
