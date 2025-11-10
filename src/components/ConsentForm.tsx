@@ -115,22 +115,18 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     return !!(
       age > 0 &&
       gender &&
-      skinType &&
-      topConcern.length > 0 &&
       effectiveLocation
     );
-  }, [age, gender, skinType, topConcern, effectiveLocation]);
+  }, [age, gender, effectiveLocation]);
 
   // Get missing fields for checklist
   const missingFields = useMemo(() => {
     const missing: Array<{ label: string; icon: any }> = [];
     if (!age || age === 0) missing.push({ label: "Age", icon: Sun });
     if (!gender) missing.push({ label: "Gender", icon: Heart });
-    if (!skinType) missing.push({ label: "Skin Type", icon: Droplets });
-    if (!topConcern.length) missing.push({ label: "Top Concern", icon: Zap });
     if (!effectiveLocation) missing.push({ label: "Location", icon: MapPin });
     return missing;
-  }, [age, gender, skinType, topConcern, effectiveLocation]);
+  }, [age, gender, effectiveLocation]);
 
   // Generate hash of current profile for caching
   const generateProfileHash = useCallback(() => {
@@ -138,7 +134,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       age,
       gender,
       skinType,
-      topConcern: [...topConcern].sort(),
+      topConcern: topConcern ? [...topConcern].sort() : [],
       // Use effective location (prioritizes manual over auto-detect)
       locationCity: effectiveLocation,
       // Only include environmental data if it matches effective location
@@ -255,7 +251,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
   // Handle accordion toggle - fetch personalized magic when opened
   const handleAccordionChange = async (value: string | undefined) => {
-    setAccordionOpen(value);
+    setAccordionOpen(value || "");
 
     // Track if user manually opened the accordion
     if (value === "behind-scenes") {
@@ -557,13 +553,13 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                      How many trips around the sun? 🌞
+                      How many trips around the sun? (Age) 🌞
                       <span onClick={(e) => e.preventDefault()}>
                         <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>
                             <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                           </TooltipTrigger>
-                          <TooltipContent className="max-w-xs">
+                          <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
                             <p>This lets us tweak for your vibe—antioxidants for 20s pollution fighters, peptides for 40+ firmness.</p>
                           </TooltipContent>
                         </Tooltip>
@@ -572,14 +568,39 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="25"
+                        placeholder=""
                         data-testid="input-age"
                         autoComplete="off"
                         className="min-h-11 text-base"
                         {...field}
+                        value={field.value || ""}
+                        onFocus={() => {
+                          if (field.value === 0) {
+                            form.setValue("age", "" as any);
+                          }
+                        }}
                         onChange={(e) => {
-                          field.onChange(e);
+                          const value = e.target.value;
+                          if (value === "") {
+                            form.setValue("age", "" as any);
+                          } else {
+                            const numValue = parseInt(value, 10);
+                            if (!isNaN(numValue)) {
+                              field.onChange(numValue);
+                            }
+                          }
                           handleFormFieldChange();
+                        }}
+                        onBlur={(e) => {
+                          const value = e.target.value;
+                          if (value === "" || value === "0") {
+                            form.setValue("age", 0);
+                          } else {
+                            const numValue = parseInt(value, 10);
+                            if (!isNaN(numValue)) {
+                              field.onChange(numValue);
+                            }
+                          }
                         }}
                       />
                     </FormControl>
@@ -595,13 +616,13 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                    Your vibe? (We keep it light—no judgments.) 💫
+                    Gender?
                     <span onClick={(e) => e.preventDefault()}>
                       <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
                           <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
+                        <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
                           <p>Hormones play a role—e.g., oil control for testosterone-driven 20s guys, hydration heroes for estrogen dips in women.</p>
                         </TooltipContent>
                       </Tooltip>
@@ -643,7 +664,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       <TooltipTrigger asChild>
                         <Info className="w-4 h-4 text-muted-foreground cursor-help big-width" />
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
+                      <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
                         <p>This fine-tunes emulsions—e.g., lightweight gels for oily types in humid climate.</p>
                       </TooltipContent>
                     </Tooltip>
@@ -695,7 +716,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       <TooltipTrigger asChild>
                         <Info className="w-4 h-4 text-muted-foreground cursor-help big-width" />
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
+                      <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
                         <p>Zeroes in on heroes like bakuchiol for lines or niacinamide for redness, synced to your water quality.</p>
                       </TooltipContent>
                     </Tooltip>
@@ -876,11 +897,11 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               <div className="mt-6">
                 <Accordion type="single" collapsible className="w-full" value={accordionOpen} onValueChange={handleAccordionChange}>
                   <AccordionItem value="behind-scenes" className="border-none">
-                    <AccordionTrigger className="text-lg md:text-xl font-semibold hover:no-underline text-customText">
+                    <AccordionTrigger className="text-lg md:text-xl hover:no-underline text-customText">
                       <div className="flex items-start justify-between gap-2 flex-1 text-left">
                         <div className="flex gap-3 text-[1.1rem]">
                           <Sparkles className="md:w-4 md:h-4 w-8 h-8 mt-0 md:mt-2" />
-                          Behind the Scenes: How We Make Magic for {effectiveLocation}
+                          <span className="font-semibold">Behind the Scenes:</span> <span className="font-normal">How We Make Magic for {effectiveLocation}</span>
                         </div>
                         {isPersonalizationReady ? (
                           <Badge variant="default" className="ml-2 gap-1 text-xs md:top-[.3rem] top-[.4rem] ready-badge">
@@ -890,7 +911,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         ) : (
                           <Badge variant="secondary" className="ml-2 gap-1 text-xs md:top-[.2rem] top-[.3rem]">
                             <Lock className="w-3 h-3" />
-                            {5 - missingFields.length}/5
+                            {3 - missingFields.length}/3
                           </Badge>
                         )}
                       </div>
@@ -907,7 +928,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                               <p className="text-base text-customText/70 leading-relaxed">
                                 We need a bit more info to craft your perfect skincare experience:
                               </p>
-                              <div className="mt-4 space-y-3">
+                              <div className="mt-4 space-y-3 pl-0">
                                 {missingFields.map((field, index) => {
                                   const Icon = field.icon;
                                   return (
@@ -932,23 +953,22 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           </p>
                         </div>
                       ) : personalizedMagicText ? (
-                        <div className="max-w-none animate-in fade-in duration-500" style={{ fontFamily: 'var(--font-body)' }}>
+                        <div className="max-w-none animate-in fade-in duration-500 pl-0 text-left" style={{ fontFamily: 'var(--font-body)' }}>
                           {personalizedMagicText.split('\n').map((line, index) => {
                           if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
                             // Bold heading
                             return (
-                              <h3 key={index} className="font-bold text-lg md:text-xl text-customText mb-3 mt-4 first:mt-0">
+                              <h3 key={index} className="font-bold text-lg md:text-xl text-customText mb-3 mt-4 first:mt-0 text-left">
                                 {line.replace(/\*\*/g, '')}
                               </h3>
                             );
                           } else if (line.trim().startsWith('- **')) {
-                            // Bullet point with bold
+                            // List item with bold - remove bullet
                             const match = line.match(/- \*\*(.+?)\*\*:(.+)/);
                             if (match) {
                               return (
-                                <div key={index} className="flex items-start gap-3 mb-2 pl-1">
-                                  <span className="text-primary text-base font-bold mt-0.5 flex-shrink-0">•</span>
-                                  <p className="text-base leading-snug flex-1">
+                                <div key={index} className="mb-2 pl-0 text-left">
+                                  <p className="text-base leading-snug">
                                     <span className="font-semibold text-customText">{match[1]}:</span>
                                     <span className="text-customText/80">{match[2]}</span>
                                   </p>
@@ -956,17 +976,16 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                               );
                             }
                           } else if (line.trim().startsWith('- ')) {
-                            // Regular bullet point
+                            // Regular list item - remove bullet
                             return (
-                              <div key={index} className="flex items-start gap-3 mb-2 pl-1">
-                                <span className="text-primary text-base font-bold mt-0.5 flex-shrink-0">•</span>
-                                <p className="text-base text-customText/80 leading-snug flex-1">{line.substring(2)}</p>
+                              <div key={index} className="mb-2 pl-0 text-left">
+                                <p className="text-base text-customText/80 leading-snug">{line.substring(2)}</p>
                               </div>
                             );
                           } else if (line.trim()) {
                             // Regular paragraph
                             return (
-                              <p key={index} className="text-base text-customText/80 leading-normal mb-2">
+                              <p key={index} className="text-base text-customText/80 leading-normal mb-2 text-left">
                                 {line}
                               </p>
                             );

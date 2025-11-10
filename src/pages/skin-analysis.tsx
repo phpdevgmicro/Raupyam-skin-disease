@@ -129,9 +129,8 @@ export default function SkinAnalysis() {
         };
       case "results":
         return {
-          title: "Meet Your World-Ready Routine ✨",
-          description:
-            "Here's your personalized blend — made for your city, your climate, your glow. Every drop adapts to your world so you can outshine it daily.",
+          title: "Your Personalized Routine",
+          description: "",
         };
       default:
         return {
@@ -158,7 +157,7 @@ export default function SkinAnalysis() {
           </p>
         </div>
 
-        {step !== "loading" && (
+        {step !== "loading" && step !== "results" && (
           <ProgressSteps
             currentStep={stepMapping[step]}
             steps={["Quick Profile", "Upload Image", "Results"]}

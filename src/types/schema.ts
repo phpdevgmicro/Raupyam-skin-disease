@@ -4,14 +4,12 @@ export const consentFormSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   age: z.coerce.number().min(1, "Age is required").max(120, "Please enter a valid age"),
   gender: z.enum(["male", "female", "non-binary", "prefer-not-to-say"], {
-    required_error: "Please select your vibe",
+    required_error: "Please select your gender",
   }),
-  skinType: z.enum(["oily", "dry", "combination", "sensitive", "normal"], {
-    required_error: "Please select your skin's mood",
-  }),
+  skinType: z.enum(["oily", "dry", "combination", "sensitive", "normal"]).optional(),
   topConcern: z.array(z.enum(["acne", "fine-lines", "dullness", "redness", "other"]))
-    .min(1, "Please select at least one concern")
-    .max(2, "Please select at most 2 concerns"),
+    .max(2, "Please select at most 2 concerns")
+    .optional(),
   address: z.string().min(5, "Please enter a valid address"),
   city: z.string().min(2, "City is required"),
   state: z.string().min(2, "State is required"),
