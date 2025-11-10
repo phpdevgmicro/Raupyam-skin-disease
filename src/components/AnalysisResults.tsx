@@ -10,7 +10,6 @@ import {
   AlertCircle,
   CheckCircle,
   AlertTriangle,
-  Sparkles,
 } from "lucide-react";
 import type { AnalysisResponse } from "@/types/schema";
 import DOMPurify from "dompurify";

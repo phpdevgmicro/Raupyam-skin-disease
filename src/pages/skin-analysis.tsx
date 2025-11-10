@@ -17,7 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type Step = "consent" | "upload" | "loading" | "results";
@@ -116,7 +116,7 @@ export default function SkinAnalysis() {
     switch (step) {
       case "consent":
         return {
-          title: "Unlock Your Skin's Global Edge ✨",
+          title: "Unlock Your Skin's Global Edge",
           description:
             "In 60 seconds, we'll whip up a custom elixir tuned to your world—whether it's NYC's urban grit or Paris's crisp chill. We tap your city's air, water, and rays for ninja-level protection. Ready to outglow your everyday?",
         };
@@ -134,7 +134,7 @@ export default function SkinAnalysis() {
         };
       default:
         return {
-          title: "Unlock Your Skin's Global Edge ✨",
+          title: "Unlock Your Skin's Global Edge",
           description:
             "In 60 seconds, we'll whip up a custom elixir tuned to your world—whether it's NYC's urban grit or Paris's crisp chill. We tap your city's air, water, and rays for ninja-level protection. Ready to outglow your everyday?",
         };

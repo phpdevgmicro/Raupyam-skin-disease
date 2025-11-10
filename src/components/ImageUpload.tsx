@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Upload, Camera, X, ImagePlus, Sparkles } from "lucide-react";
+import { Upload, Camera, X, ImagePlus } from "lucide-react";
+import { BulletIcon } from "@/components/BulletIcon";
 import CameraCapture from "./CameraCapture";
 
 interface ImageUploadProps {
@@ -140,7 +141,7 @@ export default function ImageUpload({ onImagesChange, onStartAnalysis }: ImageUp
                       className="w-full min-h-12 md:h-14 bg-[#34a853] hover:bg-[#2d8e47] text-white font-semibold gap-2 shadow-lg hover:shadow-xl transition-shadow duration-300 text-base"
                       data-testid="button-start-analysis"
                     >
-                      <Sparkles className="w-5 h-5" />
+                      <BulletIcon className="w-5 h-5" />
                       Reveal Results
                     </Button>
                   </div>

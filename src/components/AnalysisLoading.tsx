@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { BulletIcon } from "@/components/BulletIcon";
 import { sessionStorage } from "@/lib/sessionStorage";
 
 const PROGRESS_STEPS = [
   { id: 1, label: "Pulling your location…", duration: 2000 },
   { id: 2, label: "Found {city} 🌆", duration: 1500 },
   { id: 3, label: "Pulling local AQI and humidity levels…", duration: 3000 },
-  { id: 4, label: "Calibrating your glow magic ✨", duration: 4000 },
+  { id: 4, label: "Calibrating your glow magic", duration: 4000 },
   { id: 5, label: "Almost done — crafting your personalized story…", duration: 0 },
 ];
 
@@ -68,7 +69,7 @@ export default function AnalysisLoading() {
             We're decoding your unique glow — your light, tone, and texture.
           </p>
           <p className="text-sm md:text-base text-muted-foreground text-center mb-8 flex items-center gap-2 justify-center">
-            This will take just a moment of magic <Sparkles className="w-4 h-4 text-[#fbbe04]" />
+            This will take just a moment of magic ✨ <BulletIcon className="w-4 h-4" />
           </p>
 
           <div className="min-h-[80px] mb-6 w-full">
@@ -116,8 +117,8 @@ export default function AnalysisLoading() {
             <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-[#ea4434] rounded-full animate-bounce" style={{ animationDelay: '450ms' }}></div>
           </div>
 
-          <p className="text-base md:text-lg font-semibold text-primary mb-2 text-center">
-            Don't leave! We're working our magic… ✨
+          <p className="text-base md:text-lg font-semibold text-primary mb-2 text-center flex items-center justify-center gap-2">
+            Don't leave! We're working our magic… ✨ <BulletIcon className="w-4 h-4" />
           </p>
           <p className="text-xs md:text-sm text-muted-foreground text-center">
             This may take 30-60 seconds

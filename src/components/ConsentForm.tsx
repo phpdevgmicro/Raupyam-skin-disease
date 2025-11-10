@@ -28,7 +28,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { MapPin, Loader2, Info, Droplets, Wind, Sparkles, Heart, Zap, Sun, Cloud, ArrowRight, CheckCircle2, Lock, X } from "lucide-react";
+import { MapPin, Loader2, Info, Droplets, Wind, Heart, Zap, Sun, Cloud, ArrowRight, CheckCircle2, Lock, X } from "lucide-react";
+import { BulletIcon } from "@/components/BulletIcon";
 import { fetchEnvironmentalData, detectLocationFromIP, type Coordinates, type AirQualityResponse, type WeatherResponse } from "@/lib/googleApis";
 import { sessionStorage } from "@/lib/sessionStorage";
 import { useToast } from "@/hooks/use-toast";
@@ -534,7 +535,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         placeholder="Alex Rivera"
                         data-testid="input-fullname"
                         autoComplete="off"
-                        className="min-h-11 text-base mt-15"
+                        className="min-h-11 text-base mt-15 placeholder:opacity-100 focus:placeholder:opacity-0"
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
@@ -568,10 +569,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder=""
+                        placeholder="24"
                         data-testid="input-age"
                         autoComplete="off"
-                        className="min-h-11 text-base"
+                        className="min-h-11 text-base placeholder:opacity-100 focus:placeholder:opacity-0"
                         {...field}
                         value={field.value || ""}
                         onFocus={() => {
@@ -616,7 +617,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                    Gender?
+                    What's your vibe? Gender?
                     <span onClick={(e) => e.preventDefault()}>
                       <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
@@ -674,7 +675,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       {[
                         { value: 'oily', label: 'Oily', icon: Droplets },
                         { value: 'dry', label: 'Dry', icon: Wind },
-                        { value: 'combination', label: 'Combo', icon: Sparkles },
+                        { value: 'combination', label: 'Combo', icon: BulletIcon },
                         { value: 'sensitive', label: 'Sensitive', icon: Heart },
                         { value: 'normal', label: 'Normal', icon: Zap },
                       ].map((type) => {
@@ -778,7 +779,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       placeholder="Start typing your address..."
                       data-testid="input-address"
                       autoComplete="off"
-                      className="min-h-11 text-base"
+                      className="min-h-11 text-base placeholder:opacity-100 focus:placeholder:opacity-0"
                       {...field}
                       ref={addressInputRef}
                       onChange={(e) => {
@@ -900,7 +901,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     <AccordionTrigger className="text-lg md:text-xl hover:no-underline text-customText">
                       <div className="flex items-start justify-between gap-2 flex-1 text-left">
                         <div className="flex gap-3 text-[1.1rem]">
-                          <Sparkles className="md:w-4 md:h-4 w-8 h-8 mt-0 md:mt-2" />
+                          <BulletIcon className="md:w-4 md:h-4 w-8 h-8 mt-0 md:mt-2" />
                           <span className="font-semibold">Behind the Scenes:</span> <span className="font-normal">How We Make Magic for {effectiveLocation}</span>
                         </div>
                         {isPersonalizationReady ? (
@@ -946,7 +947,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         <div className="flex flex-col items-center justify-center py-12 space-y-5">
                           <div className="relative flex items-center justify-center">
                             <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                            <Sparkles className="w-5 h-5 text-primary absolute -top-1 -right-1 animate-pulse" />
+                            <BulletIcon className="w-5 h-5 text-primary absolute -top-1 -right-1 animate-pulse" />
                           </div>
                           <p className="text-base md:text-lg text-customText/70 animate-pulse text-center">
                             Crafting your personalized magic...
@@ -1032,7 +1033,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         {/* Fun Fact Footer */}
         <div className="text-center text-sm text-muted-foreground italic">
           <span className="flex mt-5 line-height-less">
-            <Sparkles className="md:w-5 md:h-5 md:mt-[.19rem] mt-[-3px] w-8 h-8" />
+            <BulletIcon className="md:w-5 md:h-5 md:mt-[.19rem] mt-[-3px] w-8 h-8" />
             Fun fact: 92% of globe-trotters like you unlocked brighter vibes in 2 weeks. Your move? (Data's vaulted—promise.)
           </span>
         </div>
