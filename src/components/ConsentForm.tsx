@@ -42,18 +42,18 @@ interface ConsentFormProps {
 }
 
 export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps) {
-  const addressInputRef = useRef<HTMLInputElement>(null);
+  const cityInputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [addressSelected, setAddressSelected] = useState(!!initialData?.address);
+  const [citySelected, setCitySelected] = useState(!!initialData?.cityName);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(
     (initialData as any)?.coordinates || null
   );
-  const [lastSubmittedAddress, setLastSubmittedAddress] = useState<string>(
-    initialData?.address || ""
+  const [lastSubmittedCity, setLastSubmittedCity] = useState<string>(
+    initialData?.cityName || ""
   );
-  const [lastGeocodedAddress, setLastGeocodedAddress] = useState<string>(
-    initialData?.address || ""
+  const [lastGeocodedCity, setLastGeocodedCity] = useState<string>(
+    initialData?.cityName || ""
   );
   const [environmentalData, setEnvironmentalData] = useState<{
     airQuality: AirQualityResponse | null;
@@ -77,7 +77,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       gender: undefined,
       skinType: undefined,
       topConcern: [],
-      address: "",
+      cityName: "",
       city: "",
       state: "",
       country: "",
@@ -92,11 +92,15 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
   // Watch location fields for manual entry
   const city = form.watch("city");
-  const address = form.watch("address");
+  const cityName = form.watch("cityName");
 
   // Get effective location - prefer manual entry over auto-detected data
   const effectiveLocation = useMemo(() => {
-    // If user has manually entered city, use that
+    // If user has selected a city via autocomplete, use cityName
+    if (cityName && cityName.trim()) {
+      return cityName.trim();
+    }
+    // Otherwise use city field if available
     if (city && city.trim()) {
       return city.trim();
     }
@@ -104,12 +108,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     if (environmentalData?.city) {
       return environmentalData.city;
     }
-    // Fall back to address if that's all we have
-    if (address && address.trim()) {
-      return "your area";
-    }
     return null;
-  }, [city, environmentalData?.city, address]);
+  }, [cityName, city, environmentalData?.city]);
 
   // Check if all required fields are complete (including manual location entry)
   const isPersonalizationReady = useMemo(() => {
@@ -285,52 +285,55 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   }, [accordionOpen, isPersonalizationReady, personalizedMagicText, isLoadingMagicText, generateProfileHash, fetchMagicText]);
 
   useEffect(() => {
-    if (addressInputRef.current && window.google?.maps?.places) {
+    if (cityInputRef.current && window.google?.maps?.places) {
       autocompleteRef.current = new google.maps.places.Autocomplete(
-        addressInputRef.current,
+        cityInputRef.current,
         {
-          types: ["geocode"],
+          types: ["(cities)"],
         }
       );
 
       autocompleteRef.current.addListener("place_changed", async () => {
         const place = autocompleteRef.current?.getPlace();
         if (place?.formatted_address) {
-          form.setValue("address", place.formatted_address, { shouldValidate: true });
-
+          let cityName = "";
           let city = "";
           let state = "";
           let country = "";
+          let countryCode = "";
 
           place.address_components?.forEach((component: google.maps.places.AddressComponent) => {
             const types = component.types;
             if (types.includes("locality")) {
               city = component.long_name;
+              cityName = component.long_name;
             }
             if (types.includes("administrative_area_level_1")) {
               state = component.long_name;
             }
             if (types.includes("country")) {
               country = component.long_name;
+              countryCode = component.short_name;
             }
           });
 
-          form.setValue("city", city, { shouldValidate: true });
+          form.setValue("cityName", cityName, { shouldValidate: true });
+          form.setValue("city", city || cityName, { shouldValidate: true });
           form.setValue("state", state, { shouldValidate: true });
           form.setValue("country", country, { shouldValidate: true });
 
-          // Validate that required address fields are present
-          if (!city || !state || !country) {
-            // Clear the address if incomplete
-            form.setValue("address", "", { shouldValidate: false });
+          // Validate that required fields are present
+          if (!cityName || !state || !country) {
+            // Clear the fields if incomplete
+            form.setValue("cityName", "", { shouldValidate: false });
             form.setValue("city", "", { shouldValidate: false });
             form.setValue("state", "", { shouldValidate: false });
             form.setValue("country", "", { shouldValidate: false });
-            setAddressSelected(false);
+            setCitySelected(false);
 
             toast({
-              title: "Incomplete Address",
-              description: "The selected address is missing some required details (city, state, or country). Please type a more complete address and select from the suggestions.",
+              title: "Incomplete Location",
+              description: "The selected city is missing some required details (state or country). Please try selecting a different city from the suggestions.",
               variant: "destructive",
               duration: 6000,
             });
@@ -347,20 +350,20 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             };
             setCoordinates(coords);
 
-            // Only fetch environmental data if address actually changed
-            if (place.formatted_address !== lastGeocodedAddress) {
-              setLastGeocodedAddress(place.formatted_address);
+            // Only fetch environmental data if city actually changed
+            if (cityName !== lastGeocodedCity) {
+              setLastGeocodedCity(cityName);
 
               const envData = await fetchEnvironmentalData(coords);
               setEnvironmentalData({
                 airQuality: envData.airQuality,
                 weather: envData.weather,
-                city: city || state || country,
+                city: cityName,
               });
             }
           }
 
-          setAddressSelected(true);
+          setCitySelected(true);
         }
       });
     }
@@ -375,16 +378,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       const savedAutoLocation = sessionStorage.getAutoLocation();
 
       if (savedAutoLocation) {
-        const synthesizedAddress = [savedAutoLocation.city, savedAutoLocation.state, savedAutoLocation.country]
-          .filter(Boolean)
-          .join(", ");
-
-        form.setValue("address", synthesizedAddress, { shouldValidate: false });
+        form.setValue("cityName", savedAutoLocation.city, { shouldValidate: false });
         form.setValue("city", savedAutoLocation.city, { shouldValidate: false });
         form.setValue("state", savedAutoLocation.state, { shouldValidate: false });
         form.setValue("country", savedAutoLocation.country, { shouldValidate: false });
         setCoordinates(savedAutoLocation.coordinates);
-        setAddressSelected(true);
+        setCitySelected(true);
         setEnvironmentalData({
           airQuality: savedAutoLocation.airQuality,
           weather: savedAutoLocation.weather,
@@ -418,16 +417,12 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
           sessionStorage.saveAutoLocation(autoLocationData);
 
-          const synthesizedAddress = [location.city, location.region, location.country]
-            .filter(Boolean)
-            .join(", ");
-
-          form.setValue("address", synthesizedAddress, { shouldValidate: false });
+          form.setValue("cityName", location.city, { shouldValidate: false });
           form.setValue("city", location.city, { shouldValidate: false });
           form.setValue("state", location.region, { shouldValidate: false });
           form.setValue("country", location.country, { shouldValidate: false });
           setCoordinates(coords);
-          setAddressSelected(true);
+          setCitySelected(true);
           setEnvironmentalData({
             airQuality: envData.airQuality,
             weather: envData.weather,
@@ -446,18 +441,18 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
   const handleFormSubmit = async (data: ConsentFormData) => {
     // Validate that location fields are not empty
-    if (!data.city || !data.state || !data.country) {
-      form.setError("address", {
+    if (!data.cityName || !data.city || !data.state || !data.country) {
+      form.setError("cityName", {
         type: "manual",
-        message: "Please select a complete address from the dropdown"
+        message: "Please select a city from the dropdown"
       });
       form.setError("city", {
         type: "manual",
         message: "City is required"
       });
       toast({
-        title: "Incomplete Address",
-        description: "Please select a complete address from the dropdown. Type your address and choose from the suggestions.",
+        title: "Incomplete Location",
+        description: "Please select a city from the dropdown. Start typing your city name and choose from the suggestions.",
         variant: "destructive",
         duration: 5000,
       });
@@ -486,15 +481,15 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         });
       }
 
-      if (!coordinates && data.address !== lastSubmittedAddress) {
+      if (!coordinates && data.cityName !== lastSubmittedCity) {
         toast({
           title: "Location not found",
-          description: "We couldn't get coordinates for your address, but you can still proceed.",
+          description: "We couldn't get coordinates for your city, but you can still proceed.",
           duration: 5000,
         });
       }
 
-      setLastSubmittedAddress(data.address);
+      setLastSubmittedCity(data.cityName);
       onSubmit(patientData as ConsentFormData);
     } catch (error) {
       console.error('Form submission error:', error);
@@ -767,21 +762,21 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
             <FormField
               control={form.control}
-              name="address"
+              name="cityName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2 text-base font-semibold">
                     <MapPin className="w-4 h-4" />
-                    Address *
+                    City *
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Start typing your address..."
-                      data-testid="input-address"
+                      placeholder="Start typing your city..."
+                      data-testid="input-city-name"
                       autoComplete="off"
                       className="min-h-11 text-base placeholder:opacity-100 focus:placeholder:opacity-0"
                       {...field}
-                      ref={addressInputRef}
+                      ref={cityInputRef}
                       onChange={(e) => {
                         field.onChange(e);
                         handleFormFieldChange();
@@ -793,33 +788,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold">City *</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          placeholder="Select address to auto-fill"
-                          data-testid="input-city"
-                          autoComplete="off"
-                          {...field}
-                          readOnly
-                          className="min-h-11 text-base pr-10 bg-muted/30"
-                        />
-                        {field.value && (
-                          <MapPin className="w-4 h-4 text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2" />
-                        )}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="state"
@@ -828,7 +797,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     <FormLabel className="text-base font-semibold">State *</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Select address to auto-fill"
+                        placeholder="Auto-filled from city"
                         data-testid="input-state"
                         autoComplete="off"
                         {...field}
@@ -849,7 +818,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     <FormLabel className="text-base font-semibold">Country *</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Select address to auto-fill"
+                        placeholder="Auto-filled from city"
                         data-testid="input-country"
                         autoComplete="off"
                         {...field}
@@ -864,7 +833,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             </div>
 
             {/* Auto-detected Location Message */}
-            {address && environmentalData && environmentalData.city && (
+            {cityName && environmentalData && environmentalData.city && (
               <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-primary mt-[.12rem] flex-shrink-0" />
@@ -927,6 +896,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             We need a bit more info to craft your perfect skincare experience:
                           </p>
                           <div className="mt-4 space-y-3 pl-0">
+                            <p className="text-sm font-semibold text-customText/80 mb-2">Required:</p>
                             {missingFields.map((field, index) => {
                               const Icon = field.icon;
                               return (
@@ -936,6 +906,19 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                                 </div>
                               );
                             })}
+                            <p className="text-sm font-semibold text-customText/80 mt-5 mb-2">Optional (but helpful for better results!):</p>
+                            {!skinType && (
+                              <div className="flex items-center gap-3 text-base">
+                                <Droplets className="w-5 h-5 text-muted-foreground" />
+                                <span className="text-customText/60">Skin Type</span>
+                              </div>
+                            )}
+                            {(!topConcern || topConcern.length === 0) && (
+                              <div className="flex items-center gap-3 text-base">
+                                <Zap className="w-5 h-5 text-muted-foreground" />
+                                <span className="text-customText/60">Top Concern</span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ) : isLoadingMagicText ? (

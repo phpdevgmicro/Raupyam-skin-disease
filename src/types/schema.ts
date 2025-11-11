@@ -10,7 +10,7 @@ export const consentFormSchema = z.object({
   topConcern: z.array(z.enum(["acne", "fine-lines", "dullness", "redness", "other"]))
     .max(2, "Please select at most 2 concerns")
     .optional(),
-  address: z.string().min(5, "Please enter a valid address"),
+  cityName: z.string().min(2, "Please select a city"),
   city: z.string().min(2, "City is required"),
   state: z.string().min(2, "State is required"),
   country: z.string().min(2, "Country is required"),
