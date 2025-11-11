@@ -558,7 +558,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       <span onClick={(e) => e.preventDefault()}>
                         <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>
-                            <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                            <Info className="w-5 h-5 text-muted-foreground cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
                             <p className="tool-tip-info">This lets us tweak for your vibe—antioxidants for 20s pollution fighters, peptides for 40+ firmness.</p>
@@ -621,7 +621,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     <span onClick={(e) => e.preventDefault()}>
                       <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
-                          <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                          <Info className="w-5 h-5 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
                           <p className="tool-tip-info">Hormones play a role—e.g., oil control for testosterone-driven 20s guys, hydration heroes for estrogen dips in women.</p>
@@ -663,7 +663,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     Your skin's mood today? (Flaky rebel or oily adventurer?) 🧴
                     <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
-                        <Info className="w-4 h-4 text-muted-foreground cursor-help big-width" />
+                        <Info className="w-5 h-5 text-muted-foreground cursor-help big-width" />
                       </TooltipTrigger>
                       <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
                         <p className="tool-tip-info">This fine-tunes emulsions—e.g., lightweight gels for oily types in humid climate.</p>
@@ -715,7 +715,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     What's bugging your glow most? (Pick 1-2—we've got fixes.) 🔥
                     <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
-                        <Info className="w-4 h-4 text-muted-foreground cursor-help big-width" />
+                        <Info className="w-5 h-5 text-muted-foreground cursor-help big-width" />
                       </TooltipTrigger>
                       <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
                         <p className="tool-tip-info">Zeroes in on heroes like bakuchiol for lines or niacinamide for redness, synced to your water quality.</p>
@@ -898,18 +898,19 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               <div className="mt-6">
                 <Accordion type="single" collapsible className="w-full" value={accordionOpen} onValueChange={handleAccordionChange}>
                   <AccordionItem value="behind-scenes" className="border-none">
-                    <AccordionTrigger className="text-lg md:text-xl hover:no-underline text-customText px-0">
-                      <div className="flex items-start justify-between gap-2 flex-1 text-left">
-                        <div className="text-[1.1rem]">
-                          <span className="font-semibold">Behind the Scenes:</span> <span className="font-normal">How We Make Magic for {effectiveLocation}</span>
+                    <AccordionTrigger className="text-lg md:text-xl hover:no-underline text-customText px-0 items-center">
+                      <div className="flex items-center justify-between gap-2 flex-1 text-left">
+                        <div className="text-[1.1rem] text-left">
+                          <span className="font-semibold">Behind the Scenes:</span>
+                          <span className="font-normal block md:inline md:ml-1">How We Make Magic for {effectiveLocation}</span>
                         </div>
                         {isPersonalizationReady ? (
-                          <Badge variant="default" className="ml-2 gap-1 text-xs md:top-[.3rem] top-[.4rem] ready-badge">
+                          <Badge variant="default" className="ml-2 gap-1 text-xs flex-shrink-0 ready-badge">
                             <CheckCircle2 className="w-3 h-3" />
                             Ready!
                           </Badge>
                         ) : (
-                          <Badge variant="secondary" className="ml-2 gap-1 text-xs md:top-[.2rem] top-[.3rem]">
+                          <Badge variant="secondary" className="ml-2 gap-1 text-xs flex-shrink-0">
                             <Lock className="w-3 h-3" />
                             {3 - missingFields.length}/3
                           </Badge>
@@ -1026,8 +1027,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
         {/* Fun Fact Footer */}
         <div className="text-left text-sm text-muted-foreground italic">
-          <span className="flex mt-5 line-height-less">
-            <BulletIcon className="md:w-5 md:h-5 md:mt-[.19rem] mt-[-3px] w-8 h-8 mr-2" />
+          <span className="flex mt-5 line-height-less">           
             Fun fact: 92% of globe-trotters like you unlocked brighter vibes in 2 weeks. Your move? (Data's vaulted—promise.)
           </span>
         </div>

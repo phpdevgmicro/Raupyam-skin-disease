@@ -8,9 +8,9 @@
 /* Onest Font - Custom */
 @font-face {
   font-family: "Onest";
-  src: url("/attached_assets/Onest-VariableFont_wght-VF_1762714768965.ttf")
+  src: url("/Onest-VariableFont_wght-VF_1762714768965.ttf")
       format("truetype"),
-    url("/attached_assets/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4_1762714768963.woff2")
+    url("/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4_1762714768963.woff2")
       format("woff2");
   font-weight: 100 900;
   font-style: normal;
@@ -19,7 +19,7 @@
 
 @font-face {
   font-family: "DM Sans";
-  src: url("/attached_assets/DMSans-Regular.ttf") format("truetype");
+  src: url("/DMSans-Regular.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;

@@ -116,14 +116,14 @@ export default function SkinAnalysis() {
     switch (step) {
       case "consent":
         return {
-          title: "Unlock Your Skin's Global Edge ✨",
+          title: "Unlock Your Skin's Global Edge",
           description:
             "In 60 seconds, we'll whip up a custom elixir tuned to your world—whether it's NYC's urban grit or Paris's crisp chill. We tap your city's air, water, and rays for ninja-level protection. Ready to outglow your everyday?",
         };
       case "upload":
       case "loading":
         return {
-          title: "Show Us Your Glow Up Close 📸",
+          title: "Show Us Your Glow Up Close",
           description:
             "Upload a clear photo of your skin — no filters, no pressure. This helps us read your tone, texture, and vibe to fine-tune your routine for real-world results.",
         };

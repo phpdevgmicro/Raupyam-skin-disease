@@ -101,9 +101,9 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
 
   return (
     <Card data-testid="card-analysis-results">
-      <CardContent className="space-y-10">
+      <CardContent className="space-y-6 md:space-y-10">
         <div>
-          <div className="bg-muted/30 rounded-lg p-6 md:p-8">
+          <div className="bg-muted/30 rounded-lg p-4 md:p-8">
             <div
               className="text-customText leading-relaxed prose prose-base md:prose-lg max-w-none dark:prose-invert [&_p]:text-base [&_p]:md:text-lg [&_p]:leading-relaxed [&_p]:mb-5 [&_p]:text-left [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:text-left [&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:text-left [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:text-left [&_strong]:font-semibold [&_strong]:text-customText [&_span]:text-base [&_span]:md:text-lg [&_span]:leading-relaxed [&_small]:text-sm [&_small]:leading-relaxed [&_em]:text-base [&_em]:md:text-lg [&_u]:text-base [&_u]:md:text-lg [&_div]:text-base [&_div]:md:text-lg [&_div]:leading-relaxed [&_div]:text-left [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:list-none [&_li]:pl-0 results-div-main"
               style={{ fontFamily: 'var(--font-body)' }}
@@ -123,7 +123,7 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
               {results.recommendations.map((recommendation, index) => (
                 <div
                   key={index}
-                  className="flex items-start gap-5 bg-card border rounded-lg p-6 md:p-7 hover-elevate"
+                  className="flex items-start gap-3 md:gap-5 bg-card border rounded-lg p-4 md:p-7 hover-elevate"
                   data-testid={`recommendation-${index}`}
                 >
                   <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold text-lg md:text-xl">

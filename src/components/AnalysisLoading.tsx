@@ -3,11 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { sessionStorage } from "@/lib/sessionStorage";
 
 const ROTATING_MESSAGES = [
-  { id: 1, label: "Found {city}! 🎉", duration: 8000 },
-  { id: 2, label: "Checking your local air quality...", duration: 10000 },
-  { id: 3, label: "Analyzing weather conditions...", duration: 10000 },
-  { id: 4, label: "Reading your skin's unique story...", duration: 12000 },
-  { id: 5, label: "Crafting personalized recommendations...", duration: 12000 },
+  { id: 1, label: "Found {city}! 🎉", duration: 6000 },
+  { id: 2, label: "Checking your local air quality...", duration: 7000 },
+  { id: 3, label: "Analyzing weather conditions...", duration: 7000 },
+  { id: 4, label: "Reading your skin's unique story...", duration: 7000 },
+  { id: 5, label: "Crafting personalized recommendations...", duration: 7000 },
   { id: 6, label: "Almost there...", duration: 0 },
 ];
 
@@ -79,8 +79,12 @@ export default function AnalysisLoading() {
             {getCurrentMessageLabel()}
           </p>
 
-          <p className="text-sm md:text-base text-muted-foreground text-center">
+          <p className="text-sm md:text-base text-muted-foreground text-center mb-2">
             This may take 30-60 seconds
+          </p>
+
+          <p className="text-sm md:text-base font-medium text-foreground/80 text-center">
+            Hang tight! Don't go anywhere...
           </p>
         </CardContent>
       </Card>
