@@ -232,6 +232,14 @@ label {
   line-height: 1.7 !important;
 }
 
+.neg-mar {
+  margin-top: -2px !important;
+}
+
+.tool-tip-info {
+  line-height: 25px !important;
+}
+
 input:focus,
 textarea:focus,
 select:focus,
@@ -259,12 +267,19 @@ li {
   line-height: 27px !important;
 }
 
+
 li strong {
   margin-bottom: 15px;
 }
 
 ul li {
-  margin-bottom: 20px !important;
+  margin-bottom: 10px !important;
+  margin-top: 10px !important;
+  list-style-type: none !important;
+}
+
+.results-div-main {
+  margin: 0;
 }
 
 label {
@@ -408,4 +423,28 @@ label {
 .big-width {
   width: 30px;
 }
+.neg-mar {
+  margin-top: 4px !important;
 }
+span {
+  line-height: 30px !important;
+}
+div {
+  line-height: 28px !important;
+}
+h4, h3 {
+  line-height: 28px !important;
+}
+h2 {
+  line-height: 32px !important;
+}
+p, span, li {
+  line-height: 26px !important;
+}
+
+.less-line-height {
+  line-height: 23px !important;
+}
+
+}
+

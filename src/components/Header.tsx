@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import logoImage from '@assets/logo_1762464998914.png';
+import logoImage from '@assets/logo.png';
 
 export default function Header() {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -12,9 +12,9 @@ export default function Header() {
             {!imageLoaded && (
               <div className="h-10 md:h-12 w-32 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse rounded" />
             )}
-            <img 
-              src={logoImage} 
-              alt="Raupyam" 
+            <img
+              src={logoImage}
+              alt="Raupyam"
               className={`h-10 md:h-12 w-auto transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'}`}
               data-testid="img-logo"
               onLoad={() => setImageLoaded(true)}

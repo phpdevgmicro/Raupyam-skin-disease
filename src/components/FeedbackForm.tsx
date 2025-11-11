@@ -57,7 +57,7 @@ export default function FeedbackForm() {
           <MessageSquare className="w-5 h-5 text-primary" />
           Reply here for tweaks
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="less-line-height">
           Let us know if you'd like any adjustments to your analysis
         </CardDescription>
       </CardHeader>

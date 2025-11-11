@@ -24,12 +24,12 @@ export default function AnalysisLoading() {
 
     // Rotate through messages automatically
     let messageTimer: ReturnType<typeof setTimeout>;
-    
+
     const progressToNextMessage = (messageIndex: number) => {
       if (messageIndex >= ROTATING_MESSAGES.length) return;
 
       setCurrentMessage(messageIndex);
-      
+
       const message = ROTATING_MESSAGES[messageIndex];
       if (message.duration > 0) {
         messageTimer = setTimeout(() => {
@@ -59,12 +59,12 @@ export default function AnalysisLoading() {
             <div className="w-20 h-20 border-8 border-gray-200 dark:border-gray-700 rounded-full"></div>
             <div className="absolute inset-0 w-20 h-20 border-8 border-[#34a853] border-t-transparent rounded-full animate-spin"></div>
           </div>
-          
+
           <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center">
             Analyzing your skin's story…
           </h3>
 
-          <div className="flex gap-1.5 items-center mb-8">
+          <div className="flex gap-1.5 items-center mb-4">
             <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-[#4385f5] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
             <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-[#fbbe04] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
             <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-[#34a853] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
@@ -73,7 +73,7 @@ export default function AnalysisLoading() {
 
           <p
             key={currentMessage}
-            className="text-base md:text-lg font-medium text-primary animate-in fade-in slide-in-from-bottom-2 duration-500 text-center mb-8 min-h-[28px]"
+            className="text-base md:text-lg font-medium text-primary animate-in fade-in slide-in-from-bottom-2 duration-500 text-center mb-4 min-h-[28px]"
             data-testid="progress-hint"
           >
             {getCurrentMessageLabel()}

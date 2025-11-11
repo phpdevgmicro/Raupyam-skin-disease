@@ -561,7 +561,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
-                            <p>This lets us tweak for your vibe—antioxidants for 20s pollution fighters, peptides for 40+ firmness.</p>
+                            <p className="tool-tip-info">This lets us tweak for your vibe—antioxidants for 20s pollution fighters, peptides for 40+ firmness.</p>
                           </TooltipContent>
                         </Tooltip>
                       </span>
@@ -624,7 +624,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
-                          <p>Hormones play a role—e.g., oil control for testosterone-driven 20s guys, hydration heroes for estrogen dips in women.</p>
+                          <p className="tool-tip-info">Hormones play a role—e.g., oil control for testosterone-driven 20s guys, hydration heroes for estrogen dips in women.</p>
                         </TooltipContent>
                       </Tooltip>
                     </span>
@@ -666,7 +666,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         <Info className="w-4 h-4 text-muted-foreground cursor-help big-width" />
                       </TooltipTrigger>
                       <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
-                        <p>This fine-tunes emulsions—e.g., lightweight gels for oily types in humid climate.</p>
+                        <p className="tool-tip-info">This fine-tunes emulsions—e.g., lightweight gels for oily types in humid climate.</p>
                       </TooltipContent>
                     </Tooltip>
                   </FormLabel>
@@ -718,7 +718,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         <Info className="w-4 h-4 text-muted-foreground cursor-help big-width" />
                       </TooltipTrigger>
                       <TooltipContent className="px-4 py-3 text-base leading-relaxed max-w-sm">
-                        <p>Zeroes in on heroes like bakuchiol for lines or niacinamide for redness, synced to your water quality.</p>
+                        <p className="tool-tip-info">Zeroes in on heroes like bakuchiol for lines or niacinamide for redness, synced to your water quality.</p>
                       </TooltipContent>
                     </Tooltip>
                   </FormLabel>
@@ -916,13 +916,13 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         )}
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="text-base text-customText/90 space-y-5 pt-6">
+                    <AccordionContent className="text-base text-customText/90 space-y-5 pt-3">
                       {!isPersonalizationReady ? (
                         <div className="space-y-4 p-5 bg-muted/30 rounded-lg border border-muted">
-                          <p className="font-semibold text-lg text-customText">
+                          <h4 className="font-semibold text-lg text-customText">
                             Complete your profile to unlock personalized magic!
-                          </p>
-                          <p className="text-base text-customText/70 leading-relaxed">
+                          </h4>
+                          <p className="text-base text-customText/70 leading-relaxed neg-mar">
                             We need a bit more info to craft your perfect skincare experience:
                           </p>
                           <div className="mt-4 space-y-3 pl-0">
@@ -941,7 +941,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         <div className="flex flex-col items-center justify-center py-12 space-y-5">
                           <div className="relative flex items-center justify-center">
                             <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                            <BulletIcon className="w-5 h-5 text-primary absolute -top-1 -right-1 animate-pulse" />
+
                           </div>
                           <p className="text-base md:text-lg text-customText/70 animate-pulse text-center">
                             Crafting your personalized magic...
@@ -1025,9 +1025,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         </Button>
 
         {/* Fun Fact Footer */}
-        <div className="text-center text-sm text-muted-foreground italic">
+        <div className="text-left text-sm text-muted-foreground italic">
           <span className="flex mt-5 line-height-less">
-            <BulletIcon className="md:w-5 md:h-5 md:mt-[.19rem] mt-[-3px] w-8 h-8" />
+            <BulletIcon className="md:w-5 md:h-5 md:mt-[.19rem] mt-[-3px] w-8 h-8 mr-2" />
             Fun fact: 92% of globe-trotters like you unlocked brighter vibes in 2 weeks. Your move? (Data's vaulted—promise.)
           </span>
         </div>

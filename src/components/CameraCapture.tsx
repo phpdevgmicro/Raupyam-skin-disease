@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import { Button } from "@/components/ui/button";
 import { Camera, X, FlipHorizontal } from "lucide-react";
-import logoUrl from "@assets/logo_1762464998914.png";
+import logoUrl from "@assets/logo.png";
 
 interface CameraCaptureProps {
   onCapture: (imageSrc: string) => void;
@@ -36,7 +36,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
         className="w-full h-full object-cover"
         data-testid="webcam-preview"
       />
-      
+
       <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/80 to-transparent">
         <div className="flex items-center justify-center mb-4">
           <img src={logoUrl} alt="RAUPYAM" className="h-12" />
@@ -63,7 +63,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
           >
             <FlipHorizontal className="w-6 h-6" />
           </Button>
-          
+
           <button
             onClick={capture}
             className="w-20 h-20 rounded-full bg-white border-4 border-[#34a853] hover:scale-105 transition-transform shadow-lg active:scale-95"
@@ -73,10 +73,10 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
               <Camera className="w-10 h-10 text-white" />
             </div>
           </button>
-          
+
           <div className="w-12 h-12" />
         </div>
-        
+
         <p className="text-sm text-white/90 text-center mt-4">
           {facingMode === "user" ? "Front Camera" : "Back Camera"}
         </p>

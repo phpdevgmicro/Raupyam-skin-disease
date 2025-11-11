@@ -170,7 +170,7 @@ export default function SkinAnalysis() {
           }`}
         >
           {step === "consent" && (
-            <div className="max-w-2xl mx-auto animate-in fade-in duration-300">
+            <div className="max-w-3xl mx-auto animate-in fade-in duration-300">
               <ConsentForm
                 onSubmit={handleConsentSubmit}
                 initialData={consentData}

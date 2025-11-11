@@ -46,11 +46,11 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
       KEEP_CONTENT: true,
       RETURN_TRUSTED_TYPE: false,
     });
-    
+
     // Remove bullets by converting ul/ol lists to plain divs
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = sanitized;
-    
+
     // Convert all <li> elements to <p> elements
     const listItems = tempDiv.querySelectorAll('li');
     listItems.forEach(li => {
@@ -59,7 +59,7 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
       p.className = li.className;
       li.parentNode?.replaceChild(p, li);
     });
-    
+
     // Remove <ul> and <ol> wrapper tags but keep their content
     const lists = tempDiv.querySelectorAll('ul, ol');
     lists.forEach(list => {
@@ -69,7 +69,7 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
       }
       parent?.removeChild(list);
     });
-    
+
     return tempDiv.innerHTML;
   }, [results.analysis]);
   const severityConfig = {
@@ -100,12 +100,12 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
   const SeverityIcon = config.icon;
 
   return (
-    <Card data-testid="card-analysis-results">    
+    <Card data-testid="card-analysis-results">
       <CardContent className="space-y-10">
-        <div>         
+        <div>
           <div className="bg-muted/30 rounded-lg p-6 md:p-8">
             <div
-              className="text-customText leading-relaxed prose prose-base md:prose-lg max-w-none dark:prose-invert [&_p]:text-base [&_p]:md:text-lg [&_p]:leading-relaxed [&_p]:mb-5 [&_p]:text-left [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:text-left [&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:text-left [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:text-left [&_strong]:font-semibold [&_strong]:text-customText [&_span]:text-base [&_span]:md:text-lg [&_span]:leading-relaxed [&_small]:text-sm [&_small]:leading-relaxed [&_em]:text-base [&_em]:md:text-lg [&_u]:text-base [&_u]:md:text-lg [&_div]:text-base [&_div]:md:text-lg [&_div]:leading-relaxed [&_div]:text-left [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:list-none [&_li]:pl-0"
+              className="text-customText leading-relaxed prose prose-base md:prose-lg max-w-none dark:prose-invert [&_p]:text-base [&_p]:md:text-lg [&_p]:leading-relaxed [&_p]:mb-5 [&_p]:text-left [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:text-left [&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:text-left [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:text-left [&_strong]:font-semibold [&_strong]:text-customText [&_span]:text-base [&_span]:md:text-lg [&_span]:leading-relaxed [&_small]:text-sm [&_small]:leading-relaxed [&_em]:text-base [&_em]:md:text-lg [&_u]:text-base [&_u]:md:text-lg [&_div]:text-base [&_div]:md:text-lg [&_div]:leading-relaxed [&_div]:text-left [&_ul]:list-none [&_ul]:pl-0 [&_ol]:list-none [&_ol]:pl-0 [&_li]:list-none [&_li]:pl-0 results-div-main"
               style={{ fontFamily: 'var(--font-body)' }}
               data-testid="text-analysis"
               dangerouslySetInnerHTML={{ __html: sanitizedAnalysis }}
