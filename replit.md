@@ -23,7 +23,7 @@ Preferred communication style: Simple, everyday language.
 ### Multi-Step User Flow
 
 The application guides users through a multi-step process:
-1.  **Consent Form**: Collects personal info, integrates Google Places Autocomplete for address, geocodes for coordinates, and triggers background air quality API call.
+1.  **Consent Form**: Collects personal info, integrates Google Places Autocomplete for address, geocodes for coordinates, and triggers background air quality API call. Features "Behind the Scenes" accordion that shows personalized skincare insights based on auto-detected location and environmental data immediately upon opening - no profile data required. Optional profile fields (age, gender, skin type, concerns) enhance personalization when provided.
 2.  **Image Upload**: Allows single image upload via file or camera capture (using react-webcam), with Base64 encoding.
 3.  **Analysis Loading**: Displays a full-screen loading overlay.
 4.  **Results Display**: Shows severity-based color-coded analysis, personalized recommendations, and a feedback form.

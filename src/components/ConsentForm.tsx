@@ -111,23 +111,15 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     return null;
   }, [cityName, city, environmentalData?.city]);
 
-  // Check if all required fields are complete (including manual location entry)
+  // Check if environmental data is ready for personalization
   const isPersonalizationReady = useMemo(() => {
-    return !!(
-      age > 0 &&
-      gender &&
-      effectiveLocation
-    );
-  }, [age, gender, effectiveLocation]);
+    return !!(effectiveLocation && environmentalData);
+  }, [effectiveLocation, environmentalData]);
 
-  // Get missing fields for checklist
-  const missingFields = useMemo(() => {
-    const missing: Array<{ label: string; icon: any }> = [];
-    if (!age || age === 0) missing.push({ label: "Age", icon: Sun });
-    if (!gender) missing.push({ label: "Gender", icon: Heart });
-    if (!effectiveLocation) missing.push({ label: "Location", icon: MapPin });
-    return missing;
-  }, [age, gender, effectiveLocation]);
+  // Check if user has added profile enhancements
+  const hasProfileData = useMemo(() => {
+    return !!(age > 0 || gender || skinType || (topConcern && topConcern.length > 0));
+  }, [age, gender, skinType, topConcern]);
 
   // Generate hash of current profile for caching
   const generateProfileHash = useCallback(() => {
@@ -760,6 +752,50 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               )}
             />
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">Country *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Auto-filled from city"
+                        data-testid="input-country"
+                        autoComplete="off"
+                        {...field}
+                        readOnly
+                        className="min-h-11 text-base bg-muted/30"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">State *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Auto-filled from city"
+                        data-testid="input-state"
+                        autoComplete="off"
+                        {...field}
+                        readOnly
+                        className="min-h-11 text-base bg-muted/30"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="cityName"
@@ -788,52 +824,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="state"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold">State *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Auto-filled from city"
-                        data-testid="input-state"
-                        autoComplete="off"
-                        {...field}
-                        readOnly
-                        className="min-h-11 text-base bg-muted/30"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold">Country *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Auto-filled from city"
-                        data-testid="input-country"
-                        autoComplete="off"
-                        {...field}
-                        readOnly
-                        className="min-h-11 text-base bg-muted/30"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
             {/* Auto-detected Location Message */}
-            {cityName && environmentalData && environmentalData.city && (
+            {environmentalData && environmentalData.city && (
               <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-primary mt-[.12rem] flex-shrink-0" />
@@ -872,56 +864,11 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         <div className="text-[1.1rem] text-left">
                           <span className="font-semibold">Behind the Scenes:</span>
                           <span className="font-normal block md:inline md:ml-1">How We Make Magic for {effectiveLocation}</span>
-                        </div>
-                        {isPersonalizationReady ? (
-                          <Badge variant="default" className="ml-2 gap-1 text-xs flex-shrink-0 ready-badge">
-                            <CheckCircle2 className="w-3 h-3" />
-                            Ready!
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary" className="ml-2 gap-1 text-xs flex-shrink-0">
-                            <Lock className="w-3 h-3" />
-                            {3 - missingFields.length}/3
-                          </Badge>
-                        )}
+                        </div>                        
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-base text-customText/90 space-y-5 pt-3">
-                      {!isPersonalizationReady ? (
-                        <div className="space-y-4 p-5 bg-muted/30 rounded-lg border border-muted">
-                          <h4 className="font-semibold text-lg text-customText">
-                            Complete your profile to unlock personalized magic!
-                          </h4>
-                          <p className="text-base text-customText/70 leading-relaxed neg-mar">
-                            We need a bit more info to craft your perfect skincare experience:
-                          </p>
-                          <div className="mt-4 space-y-3 pl-0">
-                            <p className="text-sm font-semibold text-customText/80 mb-2">Required:</p>
-                            {missingFields.map((field, index) => {
-                              const Icon = field.icon;
-                              return (
-                                <div key={index} className="flex items-center gap-3 text-base">
-                                  <Icon className="w-5 h-5 text-primary" />
-                                  <span className="text-customText/80">{field.label}</span>
-                                </div>
-                              );
-                            })}
-                            <p className="text-sm font-semibold text-customText/80 mt-5 mb-2">Optional (but helpful for better results!):</p>
-                            {!skinType && (
-                              <div className="flex items-center gap-3 text-base">
-                                <Droplets className="w-5 h-5 text-muted-foreground" />
-                                <span className="text-customText/60">Skin Type</span>
-                              </div>
-                            )}
-                            {(!topConcern || topConcern.length === 0) && (
-                              <div className="flex items-center gap-3 text-base">
-                                <Zap className="w-5 h-5 text-muted-foreground" />
-                                <span className="text-customText/60">Top Concern</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ) : isLoadingMagicText ? (
+                      {isLoadingMagicText ? (
                         <div className="flex flex-col items-center justify-center py-12 space-y-5">
                           <div className="relative flex items-center justify-center">
                             <Loader2 className="w-12 h-12 animate-spin text-primary" />
@@ -976,7 +923,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         <p className="text-base text-customText/70 text-center py-6">
                           Something went wrong. Please try again.
                         </p>
-                      )}
+                      )}    
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>

@@ -125,8 +125,6 @@ export interface PersonalizeMagicRequest {
     so2?: number;
     co?: number;
     windSpeed?: number;
-    cloudCover?: number;
-    visibility?: number;
   };
 }
 
