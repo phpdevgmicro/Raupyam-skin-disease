@@ -1,0 +1,493 @@
+User Context:
+User Profile:
+- Age: 23
+- Gender: non-binary
+- Skin Type: oily
+- Top Concerns: dullness, redness
+
+Environmental Data for your area:
+- Air Quality Index (AQI): unknown 
+- Humidity: unknown
+- UV Index: unknown
+- Temperature: unknown
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Moderate haze in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: High minerals? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Low rays in sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 35yo combination type in rainy Seattle? Peptide emulsion with humectant layers—balanced, dewy by week 3.)
+
+User Context:
+User Profile:
+- Age: 24
+- Gender: male
+- Skin Type: oily
+- Top Concerns: acne
+
+Environmental Data for Chandigarh:
+- Air Quality Index (AQI): 48 (Moderate air quality)
+- Humidity: 54%
+- UV Index: 0
+- Temperature: 18.9°C
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Moderate haze in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: High minerals? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Low rays in sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 35yo combination type in rainy Seattle? Peptide emulsion with humectant layers—balanced, dewy by week 3.)
+
+User Context:
+User Profile:
+- Age: 40
+- Gender: female
+- Skin Type: dry
+- Top Concerns: acne
+
+Environmental Data for Chandigarh:
+- Air Quality Index (AQI): 48 (Moderate air quality)
+- Humidity: 54%
+- UV Index: 0
+- Temperature: 18.9°C
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Moderate haze in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: High minerals? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Low rays in sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 35yo combination type in rainy Seattle? Peptide emulsion with humectant layers—balanced, dewy by week 3.)
+
+User Context:
+User Profile:
+- Age: 44
+- Gender: male
+- Skin Type: oily
+- Top Concerns: fine-lines
+
+Environmental Data for Chandigarh:
+- Air Quality Index (AQI): 48 (Moderate air quality)
+- Humidity: 54%
+- UV Index: 0
+- Temperature: 18.9°C
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Moderate haze in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: High minerals? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Low rays in sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 35yo combination type in rainy Seattle? Peptide emulsion with humectant layers—balanced, dewy by week 3.)
+
+User Context:
+User Profile (JSON):
+{
+    "age": "45",
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+
+Environmental Data (JSON):
+null
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+User Context:
+User Profile (JSON):
+{
+    "age": "45",
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+
+Environmental Data (JSON):
+{
+    "city": "Chandigarh",
+    "aqi": 48,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 54,
+    "uvIndex": 0,
+    "temperature": 18.9,
+    "weatherDesc": "Clear",
+    "pm25": 36.19,
+    "pm10": 55.18,
+    "no2": 9.29,
+    "o3": 20.1,
+    "so2": 2.8,
+    "co": 1123.47,
+    "windSpeed": 10
+}
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+User Context:
+User Profile (JSON):
+{
+    "age": "45",
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+
+Environmental Data (JSON):
+{
+    "city": "Chandigarh",
+    "aqi": 48,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 54,
+    "uvIndex": 0,
+    "temperature": 18.9,
+    "weatherDesc": "Clear",
+    "pm25": 36.19,
+    "pm10": 55.18,
+    "no2": 9.29,
+    "o3": 20.1,
+    "so2": 2.8,
+    "co": 1123.47,
+    "windSpeed": 10
+}
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+User Context:
+user
+{
+    "age": "45",
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+
+env
+{
+    "city": "Chandigarh",
+    "aqi": 48,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 54,
+    "uvIndex": 0,
+    "temperature": 18.9,
+    "weatherDesc": "Clear",
+    "pm25": 36.19,
+    "pm10": 55.18,
+    "no2": 9.29,
+    "o3": 20.1,
+    "so2": 2.8,
+    "co": 1123.47,
+    "windSpeed": 10
+}
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+User Context:
+user
+{
+    "age": "45",
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+
+env
+{
+    "city": "Chandigarh",
+    "aqi": 48,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 54,
+    "uvIndex": 0,
+    "temperature": 18.9,
+    "weatherDesc": "Clear",
+    "pm25": 36.19,
+    "pm10": 55.18,
+    "no2": 9.29,
+    "o3": 20.1,
+    "so2": 2.8,
+    "co": 1123.47,
+    "windSpeed": 10
+}
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+User Context:
+user
+{
+    "age": "45",
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "fine-lines",
+        "dullness"
+    ]
+}
+
+env
+{
+    "city": "Chandigarh",
+    "aqi": 48,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 54,
+    "uvIndex": 0,
+    "temperature": 18.9,
+    "weatherDesc": "Clear",
+    "pm25": 36.19,
+    "pm10": 55.18,
+    "no2": 9.29,
+    "o3": 20.1,
+    "so2": 2.8,
+    "co": 1123.47,
+    "windSpeed": 10
+}
+
+Template to personalize:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user{
+    "age": "45",
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "dullness",
+        "acne"
+    ]
+}
+    env{
+    "city": "Chandigarh",
+    "aqi": 48,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 54,
+    "uvIndex": 0,
+    "temperature": 18.9,
+    "weatherDesc": "Clear",
+    "pm25": 36.19,
+    "pm10": 55.18,
+    "no2": 9.29,
+    "o3": 20.1,
+    "so2": 2.8,
+    "co": 1123.47,
+    "windSpeed": 10
+}
+}
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": "55",
+    "gender": "male",
+    "skinType": "dry",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+    env:{
+    "city": "444"
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": "55",
+    "gender": "male",
+    "skinType": "combination",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+    env:{
+    "city": "your area"
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": "49",
+    "gender": "male",
+    "skinType": "dry",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+    env:{
+    "city": "Chandigarh",
+    "aqi": 29,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 74,
+    "uvIndex": 0,
+    "temperature": 14.6,
+    "pm25": 79.73,
+    "pm10": 128.14,
+    "no2": 47.25,
+    "o3": 2.75,
+    "so2": 3.19,
+    "co": 1394.15,
+    "windSpeed": 8
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 49,
+    "gender": "male",
+    "skinType": "dry",
+    "topConcern": [
+        "fine-lines"
+    ]
+}
+    env:{
+    "city": "Chandigarh"
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": "45",
+    "gender": "male",
+    "skinType": "dry",
+    "topConcern": [
+        "redness"
+    ]
+}
+    env:{
+    "city": "Chandigarh",
+    "aqi": 30,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 77,
+    "uvIndex": 0,
+    "temperature": 13.4,
+    "pm25": 75.25,
+    "pm10": 134.91,
+    "no2": 41.78,
+    "o3": 3.27,
+    "so2": 3.23,
+    "co": 1269.93,
+    "windSpeed": 6
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+

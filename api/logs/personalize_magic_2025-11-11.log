@@ -1,0 +1,607 @@
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 34,
+    "gender": "female",
+    "topConcern": []
+}
+    env:{
+    "city": "Chandigarh",
+    "aqi": 27,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm10",
+    "humidity": 83,
+    "uvIndex": 0,
+    "temperature": 12.9,
+    "pm25": 79.53,
+    "pm10": 161.08,
+    "no2": 36.24,
+    "o3": 3.13,
+    "so2": 3.42,
+    "co": 1199.75,
+    "windSpeed": 6
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 21,
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "acne"
+    ]
+}
+    env:{
+    "city": "Kolkata",
+    "aqi": 27,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm10",
+    "humidity": 40,
+    "uvIndex": 5,
+    "temperature": 28,
+    "pm25": 82.37,
+    "pm10": 156.41,
+    "no2": 27.68,
+    "o3": 9.08,
+    "so2": 5.7,
+    "co": 929.02,
+    "windSpeed": 8
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 1,
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "acne"
+    ]
+}
+    env:{
+    "city": "Kolkata",
+    "aqi": 27,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm10",
+    "humidity": 40,
+    "uvIndex": 5,
+    "temperature": 28,
+    "pm25": 82.37,
+    "pm10": 156.41,
+    "no2": 27.68,
+    "o3": 9.08,
+    "so2": 5.7,
+    "co": 929.02,
+    "windSpeed": 8
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 12,
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "acne"
+    ]
+}
+    env:{
+    "city": "Kolkata",
+    "aqi": 27,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm10",
+    "humidity": 40,
+    "uvIndex": 5,
+    "temperature": 28,
+    "pm25": 82.37,
+    "pm10": 156.41,
+    "no2": 27.68,
+    "o3": 9.08,
+    "so2": 5.7,
+    "co": 929.02,
+    "windSpeed": 8
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 9,
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "acne"
+    ]
+}
+    env:{
+    "city": "Kolkata",
+    "aqi": 27,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm10",
+    "humidity": 40,
+    "uvIndex": 5,
+    "temperature": 28,
+    "pm25": 82.37,
+    "pm10": 156.41,
+    "no2": 27.68,
+    "o3": 9.08,
+    "so2": 5.7,
+    "co": 929.02,
+    "windSpeed": 8
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 2,
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "acne"
+    ]
+}
+    env:{
+    "city": "Kolkata",
+    "aqi": 27,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm10",
+    "humidity": 40,
+    "uvIndex": 5,
+    "temperature": 28,
+    "pm25": 82.37,
+    "pm10": 156.41,
+    "no2": 27.68,
+    "o3": 9.08,
+    "so2": 5.7,
+    "co": 929.02,
+    "windSpeed": 8
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 23,
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "acne"
+    ]
+}
+    env:{
+    "city": "Kolkata",
+    "aqi": 27,
+    "aqiCategory": "Low air quality",
+    "dominantPollutant": "pm10",
+    "humidity": 40,
+    "uvIndex": 5,
+    "temperature": 28,
+    "pm25": 82.37,
+    "pm10": 156.41,
+    "no2": 27.68,
+    "o3": 9.08,
+    "so2": 5.7,
+    "co": 929.02,
+    "windSpeed": 8
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 53,
+    "gender": "female",
+    "skinType": "dry",
+    "topConcern": []
+}
+    env:{
+    "city": "Mohali"
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 34,
+    "gender": "male",
+    "skinType": "oily",
+    "topConcern": [
+        "acne"
+    ]
+}
+    env:{
+    "city": "Dera Bassi",
+    "aqi": 58,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm10",
+    "humidity": 51,
+    "uvIndex": 0,
+    "temperature": 19.5,
+    "pm25": 26.36,
+    "pm10": 48.21,
+    "no2": 15.71,
+    "o3": 10.88,
+    "so2": 4.37,
+    "co": 707.65,
+    "windSpeed": 13
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 45,
+    "gender": "male",
+    "topConcern": []
+}
+    env:{
+    "city": "444"
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 45,
+    "gender": "female",
+    "topConcern": []
+}
+    env:{
+    "city": "Chandigarh",
+    "aqi": 52,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 57,
+    "uvIndex": 0,
+    "temperature": 18.2,
+    "pm25": 32.86,
+    "pm10": 40.73,
+    "no2": 26.02,
+    "o3": 36.03,
+    "so2": 5.09,
+    "co": 947.28,
+    "windSpeed": 11
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 45,
+    "gender": "female",
+    "topConcern": []
+}
+    env:{
+    "city": "Sahibzada Ajit Singh Nagar",
+    "aqi": 48,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 57,
+    "uvIndex": 0,
+    "temperature": 18.3,
+    "pm25": 36.04,
+    "pm10": 46.47,
+    "no2": 23,
+    "o3": 31.57,
+    "so2": 6.59,
+    "co": 511.26,
+    "windSpeed": 11
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 45,
+    "gender": "female",
+    "skinType": "combination",
+    "topConcern": [
+        "dullness"
+    ]
+}
+    env:{
+    "city": "Sahibzada Ajit Singh Nagar",
+    "aqi": 48,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 57,
+    "uvIndex": 0,
+    "temperature": 18.3,
+    "pm25": 36.04,
+    "pm10": 46.47,
+    "no2": 23,
+    "o3": 31.57,
+    "so2": 6.59,
+    "co": 511.26,
+    "windSpeed": 11
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 0,
+    "topConcern": []
+}
+    env:{
+    "city": "Chandigarh",
+    "aqi": 52,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 57,
+    "uvIndex": 0,
+    "temperature": 18.2,
+    "pm25": 32.86,
+    "pm10": 40.73,
+    "no2": 26.02,
+    "o3": 36.03,
+    "so2": 5.09,
+    "co": 947.28,
+    "windSpeed": 11
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 0,
+    "topConcern": []
+}
+    env:{
+    "city": "Chandigarh",
+    "aqi": 52,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 57,
+    "uvIndex": 0,
+    "temperature": 18.2,
+    "pm25": 32.86,
+    "pm10": 40.73,
+    "no2": 26.02,
+    "o3": 36.03,
+    "so2": 5.09,
+    "co": 947.28,
+    "windSpeed": 11
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 0,
+    "topConcern": []
+}
+    env:{
+    "city": "Chandigarh",
+    "aqi": 52,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 57,
+    "uvIndex": 0,
+    "temperature": 18.2,
+    "pm25": 32.86,
+    "pm10": 40.73,
+    "no2": 26.02,
+    "o3": 36.03,
+    "so2": 5.09,
+    "co": 947.28,
+    "windSpeed": 11
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
+User Context:
+Template Text to Modify:
+Your World's Whisper to Your Skin: How We Craft Smarter
+We don't guess—we *get* your backdrop. Pulling live deets like:
+- **Air Quality (AQI/PM2.5)**: Smog in **[CITY]**? Antioxidant armor (think liposome vitamin C—sips in protection without the weight).
+- **Water Quality**: Mineral-heavy taps? Soothing hyaluronics to melt away that parched pull.
+- **UV & Humidity**: Fierce rays or sticky air? Tailored shields—matte in the tropics, rich in the chill.
+Blend with your age/gender/skin intel = your no-BS recipe. (E.g., 28yo oily type in sunny Sydney? Niacinamide gel with UV-synced mattifiers—clearer, bouncier by week 3.)
+
+Raw Data (JSON—use only this for personalization):
+{
+    user:{
+    "age": 0,
+    "topConcern": []
+}
+    env:{
+    "city": "Chandigarh",
+    "aqi": 52,
+    "aqiCategory": "Moderate air quality",
+    "dominantPollutant": "pm25",
+    "humidity": 60,
+    "uvIndex": 0,
+    "temperature": 17.6,
+    "pm25": 32.86,
+    "pm10": 40.73,
+    "no2": 26.02,
+    "o3": 36.03,
+    "so2": 5.09,
+    "co": 947.28,
+    "windSpeed": 11
+}
+}
+
+Instructions: Modify the template by injecting the data. Make the "E.g." example user-specific (e.g., tie skin/env to a rec like "ceramide lock for rainy days"). Keep structure identical.
+
