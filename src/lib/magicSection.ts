@@ -42,13 +42,16 @@ function categorizeHumidity(humidity: number | undefined | null): string {
 
 /**
  * Convert markdown-style formatting to HTML
- * Replaces **text** with <strong>text</strong> and handles newlines
+ * Replaces **text** and *text* with <strong>text</strong> and handles newlines
  */
 export function convertMarkdownToHtml(text: string): string {
   if (!text) return text;
   
-  // Replace **text** with <strong>text</strong>
+  // First replace **text** with <strong>text</strong> (double asterisks)
   let formatted = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  
+  // Then replace remaining *text* with <strong>text</strong> (single asterisks)
+  formatted = formatted.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
   
   // Replace single newlines with <br> but keep paragraph structure
   formatted = formatted.replace(/\n/g, '<br>');

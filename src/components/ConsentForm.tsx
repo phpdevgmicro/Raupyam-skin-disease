@@ -290,6 +290,23 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     }
   }, [accordionOpen, isPersonalizationReady, personalizedMagicText, isLoadingMagicText, retryRequested, generateProfileHash, fetchMagicText]);
 
+  // Auto-fetch when environment data finishes loading while accordion is already open
+  // This fixes the race condition where user opens accordion before env data is ready
+  useEffect(() => {
+    const currentHash = generateProfileHash();
+    
+    // Only fetch if we haven't already tried this profile hash (prevents infinite retry loops on failures)
+    if (
+      accordionOpen === "behind-scenes" &&
+      isPersonalizationReady &&
+      !personalizedMagicText &&
+      !isLoadingMagicText &&
+      (lastFetchedHashRef.current !== currentHash || retryRequested)
+    ) {
+      fetchMagicText();
+    }
+  }, [accordionOpen, isPersonalizationReady, personalizedMagicText, isLoadingMagicText, retryRequested, generateProfileHash, fetchMagicText]);
+
   useEffect(() => {
     if (cityInputRef.current && window.google?.maps?.places) {
       autocompleteRef.current = new google.maps.places.Autocomplete(
@@ -893,7 +910,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                     </AccordionTrigger>
                     <AccordionContent className="text-base text-customText/90 space-y-5 pt-3">
                       {isEnvLoading ? (
-                        <div className="flex flex-col items-center justify-center py-12 space-y-5">
+                        <div className="flex flex-col items-center justify-center py-12 space-y-5 animate-in fade-in duration-300">
                           <div className="relative flex items-center justify-center">
                             <Loader2 className="w-12 h-12 animate-spin text-primary" />
                           </div>
@@ -902,7 +919,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           </p>
                         </div>
                       ) : isLoadingMagicText ? (
-                        <div className="flex flex-col items-center justify-center py-12 space-y-5">
+                        <div className="flex flex-col items-center justify-center py-12 space-y-5 animate-in fade-in duration-300">
                           <div className="relative flex items-center justify-center">
                             <Loader2 className="w-12 h-12 animate-spin text-primary" />
                           </div>
@@ -917,9 +934,20 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                           dangerouslySetInnerHTML={{ __html: personalizedMagicText }}
                         />
                       ) : (
-                        <p className="text-base text-customText/70 text-center py-6">
-                          Something went wrong. Please try again.
-                        </p>
+                        <div className="flex flex-col items-center justify-center py-8 space-y-4 animate-in fade-in duration-300">
+                          <p className="text-base text-customText/70 text-center">
+                            Something went wrong. Please try again.
+                          </p>
+                          <Button
+                            onClick={() => setRetryRequested(true)}
+                            variant="outline"
+                            size="sm"
+                            className="min-h-9"
+                            data-testid="button-retry-magic"
+                          >
+                            Try Again
+                          </Button>
+                        </div>
                       )}    
                     </AccordionContent>
                   </AccordionItem>
