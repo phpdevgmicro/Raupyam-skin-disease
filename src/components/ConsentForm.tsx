@@ -541,7 +541,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                      How many trips around the sun? (Age) 🌞
+                      How many trips around the sun? (Age)
                       <span onClick={(e) => e.preventDefault()}>
                         <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>
