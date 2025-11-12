@@ -25,6 +25,9 @@ export interface WeatherResponse {
   };
   condition?: string;
   uvIndex?: number;
+  weatherDesc?: string;
+  feelsLike?: number;
+  cloudCover?: number;
 }
 
 export async function fetchAirQuality(coordinates: Coordinates): Promise<AirQualityResponse | null> {
@@ -107,7 +110,10 @@ export async function fetchWeather(coordinates: Coordinates): Promise<WeatherRes
       condition: data.weatherCondition?.descriptionon?.text, 
 
       // 🌬️ Air and barrier impact
-      windSpeed: data.wind?.speed?.value,         
+      windSpeed: data.wind?.speed?.value, 
+      weatherDesc: data.weatherCondition.description.text, 
+      feelsLike: data.feelsLikeTemperature.degrees,      
+      cloudCover: data.cloudCover
     };
   } catch (error) {
     console.error('Error fetching weather:', error);
