@@ -66,7 +66,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   const [cachedProfileHash, setCachedProfileHash] = useState<string | null>(null);
   const [accordionOpen, setAccordionOpen] = useState<string>("");
   const [isManuallyOpened, setIsManuallyOpened] = useState(false);
+  const [retryRequested, setRetryRequested] = useState(false);
   const requestTokenRef = useRef(0);
+  const lastFetchedHashRef = useRef<string | null>(null);
   const { toast } = useToast();
 
   const form = useForm<ConsentFormData>({
@@ -158,6 +160,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     setPersonalizedMagicText(null);
     setCachedProfileHash(null);
 
+    // Reset lastFetchedHashRef to allow new fetches for the updated profile
+    lastFetchedHashRef.current = null;
+
     // Always close accordion when any field is filled so user reopens to fetch fresh data
     setAccordionOpen("");
     setIsManuallyOpened(false);
@@ -172,20 +177,27 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       return;
     }
 
+    // Set lastFetchedHashRef before making the API call to prevent retry loops
+    lastFetchedHashRef.current = currentHash;
+
+    // Clear retryRequested when starting a fetch
+    setRetryRequested(false);
+
     // Increment request token to invalidate any in-flight requests
     const thisRequestToken = ++requestTokenRef.current;
 
     setIsLoadingMagicText(true);
 
     try {
-      // Use effective location and only include env data if it matches
-      const useEnvData = effectiveLocation === environmentalData?.city;
+      // Get all current form values
+      const formValues = form.getValues();
 
+      // Send complete raw data without filtering - backend will handle everything
       const personalizationData = formatPersonalizationData(
-        { age, gender, skinType, topConcern },
+        formValues,
         effectiveLocation || "your area",
-        useEnvData ? (environmentalData?.airQuality || null) : null,
-        useEnvData ? (environmentalData?.weather || null) : null
+        environmentalData?.airQuality || null,
+        environmentalData?.weather || null
       );
 
       const response = await getPersonalizedMagicText(personalizationData);
@@ -198,17 +210,6 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       if (response.personalizedText) {
         setPersonalizedMagicText(response.personalizedText);
         setCachedProfileHash(currentHash);
-
-        // Show a friendly notice if environmental data is missing or not being used
-        if (!useEnvData) {
-          toast({
-            title: "Using generic recommendations",
-            description: effectiveLocation === environmentalData?.city
-              ? "We couldn't fetch live environmental data, but we've still crafted personalized insights for you!"
-              : "Using your manually entered location with general recommendations. For live AQI and weather data, select from autocomplete.",
-            duration: 5000,
-          });
-        }
       } else if (response.error) {
         console.error('Failed to get personalized text:', response.error);
         setPersonalizedMagicText(null);
@@ -240,7 +241,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         setIsLoadingMagicText(false);
       }
     }
-  }, [generateProfileHash, cachedProfileHash, personalizedMagicText, effectiveLocation, environmentalData, age, gender, skinType, topConcern, toast]);
+  }, [generateProfileHash, cachedProfileHash, personalizedMagicText, effectiveLocation, environmentalData, form, toast]);
 
   // Handle accordion toggle - fetch personalized magic when opened
   const handleAccordionChange = async (value: string | undefined) => {
@@ -261,12 +262,17 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
   // Auto-refetch when accordion is open and profile data changes
   useEffect(() => {
-    if (
+    const currentHash = generateProfileHash();
+    
+    // Only fetch if profile hash has changed from last attempt OR retry is explicitly requested
+    const shouldFetch = 
       accordionOpen === "behind-scenes" &&
       isPersonalizationReady &&
       !personalizedMagicText &&
-      !isLoadingMagicText  // Prevent duplicate requests while one is in flight
-    ) {
+      !isLoadingMagicText &&  // Prevent duplicate requests while one is in flight
+      (lastFetchedHashRef.current !== currentHash || retryRequested);  // NEW: Only run when hash changed OR retry requested
+    
+    if (shouldFetch) {
       // Debounce to avoid excessive requests during rapid edits
       const timeoutId = setTimeout(() => {
         fetchMagicText();
@@ -274,7 +280,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
       return () => clearTimeout(timeoutId);
     }
-  }, [accordionOpen, isPersonalizationReady, personalizedMagicText, isLoadingMagicText, generateProfileHash, fetchMagicText]);
+  }, [accordionOpen, isPersonalizationReady, personalizedMagicText, isLoadingMagicText, retryRequested, generateProfileHash, fetchMagicText]);
 
   useEffect(() => {
     if (cityInputRef.current && window.google?.maps?.places) {
@@ -872,53 +878,17 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         <div className="flex flex-col items-center justify-center py-12 space-y-5">
                           <div className="relative flex items-center justify-center">
                             <Loader2 className="w-12 h-12 animate-spin text-primary" />
-
                           </div>
                           <p className="text-base md:text-lg text-customText/70 animate-pulse text-center">
-                            Crafting your personalized magic...
+                            Fetching fresh data for {effectiveLocation}...
                           </p>
                         </div>
                       ) : personalizedMagicText ? (
-                        <div className="max-w-none animate-in fade-in duration-500 pl-0 text-left" style={{ fontFamily: 'var(--font-body)' }}>
-                          {personalizedMagicText.split('\n').map((line, index) => {
-                          if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
-                            // Bold heading
-                            return (
-                              <h3 key={index} className="font-bold text-lg md:text-xl text-customText mb-3 mt-4 first:mt-0 text-left">
-                                {line.replace(/\*\*/g, '')}
-                              </h3>
-                            );
-                          } else if (line.trim().startsWith('- **')) {
-                            // List item with bold - remove bullet
-                            const match = line.match(/- \*\*(.+?)\*\*:(.+)/);
-                            if (match) {
-                              return (
-                                <div key={index} className="mb-2 pl-0 text-left">
-                                  <p className="text-base leading-snug">
-                                    <span className="font-semibold text-customText">{match[1]}:</span>
-                                    <span className="text-customText/80">{match[2]}</span>
-                                  </p>
-                                </div>
-                              );
-                            }
-                          } else if (line.trim().startsWith('- ')) {
-                            // Regular list item - remove bullet
-                            return (
-                              <div key={index} className="mb-2 pl-0 text-left">
-                                <p className="text-base text-customText/80 leading-snug">{line.substring(2)}</p>
-                              </div>
-                            );
-                          } else if (line.trim()) {
-                            // Regular paragraph
-                            return (
-                              <p key={index} className="text-base text-customText/80 leading-normal mb-2 text-left">
-                                {line}
-                              </p>
-                            );
-                          }
-                          return null;
-                        })}
-                        </div>
+                        <div 
+                          className="max-w-none animate-in fade-in duration-500 pl-0 text-left prose prose-sm md:prose-base dark:prose-invert max-w-full" 
+                          style={{ fontFamily: 'var(--font-body)' }}
+                          dangerouslySetInnerHTML={{ __html: personalizedMagicText }}
+                        />
                       ) : (
                         <p className="text-base text-customText/70 text-center py-6">
                           Something went wrong. Please try again.

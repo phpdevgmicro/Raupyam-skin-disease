@@ -3,9 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { sessionStorage } from "@/lib/sessionStorage";
 
 const ROTATING_MESSAGES = [
-  { id: 1, label: "Found {city}! 🎉", duration: 6000 },
-  { id: 2, label: "Checking your local air quality...", duration: 7000 },
-  { id: 3, label: "Analyzing weather conditions...", duration: 7000 },
+  { id: 1, label: "Analyzing your location: {city}", duration: 6000 },
+  { id: 2, label: "Analyzing your air quality", duration: 7000 },
+  { id: 3, label: "Analyzing your weather condition", duration: 7000 },
   { id: 4, label: "Reading your skin's unique story...", duration: 7000 },
   { id: 5, label: "Crafting personalized recommendations...", duration: 7000 },
   { id: 6, label: "Almost there...", duration: 0 },

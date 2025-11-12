@@ -31,13 +31,27 @@ The application guides users through a multi-step process:
 ### Backend Architecture
 
 **Server Framework**: Express.js with TypeScript, acting as a minimal proxy to an external PHP service.
-**API Integration**: Communicates with a PHP backend for AI analysis. The frontend sends patient data, air quality, and image. The PHP backend uses OpenAI GPT-4.1-mini for analysis, stores data in MySQL and Google Sheets, and uploads images to Google Drive.
+**API Integration**: Communicates with a PHP backend for AI analysis. The frontend sends only useful and relevant data - user profile fields, minimal air quality summary, minimal weather summary, and image. The PHP backend uses OpenAI GPT-4.1-mini for analysis, stores data in MySQL and Google Sheets, and uploads images to Google Drive.
+**Data Flow Philosophy**: Frontend extracts and sends only relevant fields from collected data to backend APIs. This reduces payload size and improves performance while providing all necessary information for analysis.
+**Retry Loop Prevention**: Implements hash-based tracking to prevent infinite API retry loops. When an API call fails, the system won't retry unless the user profile changes or an explicit retry is requested.
 **Build Process**: Vite for frontend (to `dist/public`), esbuild for backend (to `dist`).
 
 ### Data Schema Design
 
-**Consent Form Schema**: Validated with Zod, includes full name, age, gender, skin type, and address details.
-**Analysis Request/Response**: Request includes patient data (with coordinates), air quality data (string format), and a single base64 image. Response includes analysis text, status, and result message. Air quality data is formatted comprehensively for AI analysis, including all AQI indexes and 7 pollutants.
+**Consent Form Schema**: Validated with Zod, includes full name, age, gender, skin type, concerns, and complete address details (cityName, city, state, country).
+
+**Personalize Magic Request**: Sends minimal user data and environmental summaries:
+- **User Data**: `{ fullName, age, gender, skinType, topConcern, location: { city, state, country } }`
+- **Air Quality Summary**: `{ aqi, category, pm2_5, pm10 }` - Extracted from Google Air Quality pollutants array
+- **Weather Summary**: `{ temperatureValue, temperatureUnit, humidity, uvIndex }` - Extracted from weather conditions
+
+**Analysis Request**: Sends minimal structured data:
+- **Patient Data**: Complete user profile with coordinates
+- **Air Quality Summary**: Same minimal structure as Personalize Magic (not full JSON)
+- **Weather Summary**: Same minimal structure as Personalize Magic (not full JSON)
+- **Image**: Single base64-encoded image
+
+**Backend Response Handling**: Frontend displays backend HTML responses as-is using dangerouslySetInnerHTML (sanitized with DOMPurify) - no frontend text processing or formatting.
 
 ### Design System
 

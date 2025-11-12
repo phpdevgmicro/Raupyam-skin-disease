@@ -1,38 +1,4 @@
-import { sessionStorage, PatientSessionData, AirQualityData } from './sessionStorage';
-
-function formatAirQualityForAI(airQuality: AirQualityData): string {
-  let result = '';
-  
-  if (airQuality.indexes && Array.isArray(airQuality.indexes) && airQuality.indexes.length > 0) {
-    result += 'Air Quality Indexes:\n';
-    airQuality.indexes.forEach((index: any) => {
-      result += `- ${index.displayName}: ${index.aqi} (${index.category})`;
-      if (index.dominantPollutant) {
-        result += ` - Dominant Pollutant: ${index.dominantPollutant.toUpperCase()}`;
-      }
-      result += '\n';
-    });
-  } else {
-    result += `Air Quality Index (AQI): ${airQuality.aqi || 'Unknown'}\n`;
-    result += `Category: ${airQuality.category || 'Unknown'}\n`;
-    result += `Dominant Pollutant: ${airQuality.dominantPollutant || 'Unknown'}\n`;
-  }
-  
-  if (airQuality.pollutants && Array.isArray(airQuality.pollutants) && airQuality.pollutants.length > 0) {
-    result += '\nPollutant Concentrations:\n';
-    airQuality.pollutants.forEach((pollutant: any) => {
-      const value = pollutant.concentration?.value;
-      const units = pollutant.concentration?.units;
-      if (value !== undefined) {
-        const unitsDisplay = units === 'PARTS_PER_BILLION' ? 'ppb' : 
-                            units === 'MICROGRAMS_PER_CUBIC_METER' ? 'µg/m³' : units;
-        result += `- ${pollutant.displayName} (${pollutant.fullName}): ${value} ${unitsDisplay}\n`;
-      }
-    });
-  }
-  
-  return result.trim();
-}
+import { sessionStorage, PatientSessionData, AirQualityData, WeatherData } from './sessionStorage';
 
 export const API_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -51,6 +17,7 @@ export interface AnalysisRequestData {
 export async function analyzeImages(images: string[]) {
   const patientData = sessionStorage.getPatientData();
   const airQuality = sessionStorage.getAirQuality();
+  const weather = sessionStorage.getWeather();
 
   if (!patientData) {
     throw new Error('Patient data not found in session. Please start from the beginning.');
@@ -62,16 +29,44 @@ export async function analyzeImages(images: string[]) {
 
   const image = images[0];
 
+  // Extract minimal air quality data
+  let airQualitySummary: AirQualitySummary | null = null;
+  if (airQuality && airQuality.aqi && airQuality.category) {
+    let pm2_5: number | null = null;
+    let pm10: number | null = null;
+    
+    if (airQuality.pollutants && Array.isArray(airQuality.pollutants)) {
+      const pm25Pollutant = airQuality.pollutants.find((p: any) => p.code === 'pm2.5' || p.code === 'pm25');
+      const pm10Pollutant = airQuality.pollutants.find((p: any) => p.code === 'pm10');
+      
+      pm2_5 = pm25Pollutant?.concentration?.value ?? null;
+      pm10 = pm10Pollutant?.concentration?.value ?? null;
+    }
+    
+    airQualitySummary = {
+      aqi: airQuality.aqi,
+      category: airQuality.category,
+      pm2_5,
+      pm10,
+    };
+  }
+  
+  // Extract minimal weather data
+  let weatherSummary: WeatherSummary | null = null;
+  if (weather && weather.temperature) {
+    weatherSummary = {
+      temperatureValue: weather.temperature.value,
+      temperatureUnit: weather.temperature.unit,
+      humidity: weather.humidity ?? null,
+      uvIndex: weather.uvIndex ?? null,
+    };
+  }
+
   const formData = new FormData();
   formData.append('image', image);
   formData.append('user_detail', JSON.stringify(patientData));
-  
-  if (airQuality && airQuality.aqi) {
-    const airQualityString = formatAirQualityForAI(airQuality);
-    formData.append('air_quality', airQualityString);
-  } else {
-    formData.append('air_quality', 'Air quality data not available');
-  }
+  formData.append('air_quality', JSON.stringify(airQualitySummary));
+  formData.append('weather', JSON.stringify(weatherSummary));
 
   const response = await fetch(API_ENDPOINTS.analyze, {
     method: 'POST',
@@ -102,30 +97,35 @@ export async function submitFeedback(suggestion: string, email: string) {
   return response.json();
 }
 
+export interface AirQualitySummary {
+  aqi: number;
+  category: string;
+  pm2_5: number | null;
+  pm10: number | null;
+}
+
+export interface WeatherSummary {
+  temperatureValue: number;
+  temperatureUnit: string;
+  humidity: number | null;
+  uvIndex: number | null;
+}
+
 export interface PersonalizeMagicRequest {
   userData: {
+    fullName?: string;
     age?: number;
     gender?: string;
     skinType?: string;
     topConcern?: string[];
+    location?: {
+      city?: string;
+      state?: string;
+      country?: string;
+    };
   };
-  environmentData: {
-    city: string;
-    aqi?: number;
-    aqiCategory?: string;
-    dominantPollutant?: string;
-    humidity?: number;
-    uvIndex?: number;
-    temperature?: number;
-    weatherDesc?: string;
-    pm25?: number;
-    pm10?: number;
-    no2?: number;
-    o3?: number;
-    so2?: number;
-    co?: number;
-    windSpeed?: number;
-  };
+  airQuality?: AirQualitySummary | null;
+  weather?: WeatherSummary | null;
 }
 
 export interface PersonalizeMagicResponse {
