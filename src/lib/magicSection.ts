@@ -41,9 +41,26 @@ function categorizeHumidity(humidity: number | undefined | null): string {
 }
 
 /**
+ * Convert markdown-style formatting to HTML
+ * Replaces **text** with <strong>text</strong> and handles newlines
+ */
+export function convertMarkdownToHtml(text: string): string {
+  if (!text) return text;
+  
+  // Replace **text** with <strong>text</strong>
+  let formatted = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  
+  // Replace single newlines with <br> but keep paragraph structure
+  formatted = formatted.replace(/\n/g, '<br>');
+  
+  return formatted;
+}
+
+/**
  * Format data for personalize magic API
  * Builds payload matching backend expectations: { userData, environmentData }
  * Only includes environment data if we have valid air quality and weather data
+ * Only includes user fields when they have valid values
  */
 export function formatPersonalizationData(
   formData: Partial<ConsentFormData>,
@@ -51,13 +68,28 @@ export function formatPersonalizationData(
   airQuality: AirQualityResponse | null,
   weather: WeatherResponse | null
 ): PersonalizeMagicRequest {
-  // Build user data with only relevant fields (no location, no fullName)
-  const userData = {
-    age: formData.age,
-    gender: formData.gender,
-    skinType: formData.skinType,
-    topConcern: formData.topConcern,
-  };
+  // Build user data with only fields that have valid values
+  const userData: any = {};
+  
+  // Only include age if it's a valid number greater than 0
+  if (formData.age && formData.age > 0) {
+    userData.age = formData.age;
+  }
+  
+  // Always include gender if present
+  if (formData.gender) {
+    userData.gender = formData.gender;
+  }
+  
+  // Only include skinType if present
+  if (formData.skinType) {
+    userData.skinType = formData.skinType;
+  }
+  
+  // Only include topConcern if it's an array with at least one item
+  if (formData.topConcern && Array.isArray(formData.topConcern) && formData.topConcern.length > 0) {
+    userData.topConcern = formData.topConcern;
+  }
   
   // Only build environment data if we have real data (not null/undefined)
   const hasValidEnvData = !!(airQuality && weather && city);

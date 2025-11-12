@@ -1,4 +1,6 @@
 import { sessionStorage, PatientSessionData, AirQualityData, WeatherData } from './sessionStorage';
+import { formatPersonalizationData, convertMarkdownToHtml } from './magicSection';
+import type { ConsentFormData } from '@/types/schema';
 
 export const API_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -29,7 +31,29 @@ export async function analyzeImages(images: string[]) {
 
   const image = images[0];
 
-  // Extract minimal air quality data
+  // Use the same formatPersonalizationData function for consistency
+  // Convert PatientSessionData to ConsentFormData format
+  const formDataFormatted: Partial<ConsentFormData> = {
+    fullName: patientData.fullName,
+    age: patientData.age,
+    gender: patientData.gender,
+    skinType: patientData.skinType,
+    topConcern: patientData.topConcern,
+    cityName: patientData.city || '',
+    city: patientData.city || '',
+    state: patientData.state || '',
+    country: patientData.country || '',
+  };
+
+  // Format using the same function as personalize magic
+  const personalizationData = formatPersonalizationData(
+    formDataFormatted,
+    patientData.city || '',
+    airQuality,
+    weather
+  );
+
+  // Extract minimal air quality data for backward compatibility with backend
   let airQualitySummary: AirQualitySummary | null = null;
   if (airQuality && airQuality.aqi && airQuality.category) {
     let pm2_5: number | null = null;
@@ -51,7 +75,7 @@ export async function analyzeImages(images: string[]) {
     };
   }
   
-  // Extract minimal weather data
+  // Extract minimal weather data for backward compatibility with backend
   let weatherSummary: WeatherSummary | null = null;
   if (weather && weather.temperature) {
     weatherSummary = {
@@ -62,9 +86,23 @@ export async function analyzeImages(images: string[]) {
     };
   }
 
+  // Build user_detail using the same filtered data as personalize magic
+  // This ensures age: 0 and empty topConcern arrays are not sent
+  const userDetail = {
+    fullName: patientData.fullName,
+    ...personalizationData.userData,  // This only includes valid age, gender, skinType, topConcern
+    city: patientData.city,
+    state: patientData.state,
+    country: patientData.country,
+  };
+
+  console.log('[Analysis API] Sending user detail:', JSON.stringify(userDetail, null, 2));
+  console.log('[Analysis API] Air quality summary:', JSON.stringify(airQualitySummary, null, 2));
+  console.log('[Analysis API] Weather summary:', JSON.stringify(weatherSummary, null, 2));
+
   const formData = new FormData();
   formData.append('image', image);
-  formData.append('user_detail', JSON.stringify(patientData));
+  formData.append('user_detail', JSON.stringify(userDetail));
   formData.append('air_quality', JSON.stringify(airQualitySummary));
   formData.append('weather', JSON.stringify(weatherSummary));
 
@@ -78,7 +116,14 @@ export async function analyzeImages(images: string[]) {
     throw new Error(`Analysis failed: ${errorText}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  
+  // Convert markdown formatting to HTML in the result if it contains text
+  if (result.result && typeof result.result === 'string') {
+    result.result = convertMarkdownToHtml(result.result);
+  }
+
+  return result;
 }
 
 export async function submitFeedback(suggestion: string, email: string) {

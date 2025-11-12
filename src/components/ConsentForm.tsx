@@ -33,7 +33,7 @@ import { BulletIcon } from "@/components/BulletIcon";
 import { fetchEnvironmentalData, detectLocationFromIP, type Coordinates, type AirQualityResponse, type WeatherResponse } from "@/lib/googleApis";
 import { sessionStorage } from "@/lib/sessionStorage";
 import { useToast } from "@/hooks/use-toast";
-import { formatPersonalizationData } from "@/lib/magicSection";
+import { formatPersonalizationData, convertMarkdownToHtml } from "@/lib/magicSection";
 import { getPersonalizedMagicText } from "@/lib/api";
 
 interface ConsentFormProps {
@@ -203,7 +203,9 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         environmentalData?.weather || null
       );
 
+      console.log('[Personalize Magic] Sending payload:', JSON.stringify(personalizationData, null, 2));
       const response = await getPersonalizedMagicText(personalizationData);
+      console.log('[Personalize Magic] Received response:', response);
 
       // Ignore response if a newer request has been made
       if (thisRequestToken !== requestTokenRef.current) {
@@ -211,20 +213,23 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       }
 
       if (response.personalizedText) {
-        setPersonalizedMagicText(response.personalizedText);
+        // Convert markdown formatting to HTML
+        const formattedText = convertMarkdownToHtml(response.personalizedText);
+        setPersonalizedMagicText(formattedText);
         setCachedProfileHash(currentHash);
       } else if (response.error) {
-        console.error('Failed to get personalized text:', response.error);
+        console.error('[Personalize Magic] API returned error:', response.error);
         setPersonalizedMagicText(null);
         toast({
           title: "Couldn't load personalized magic",
-          description: "Please try again in a moment.",
+          description: response.error || "Please try again in a moment.",
           variant: "destructive",
           duration: 3000,
         });
       }
     } catch (error) {
-      console.error('Error fetching personalized text:', error);
+      console.error('[Personalize Magic] Exception caught:', error);
+      console.error('[Personalize Magic] Error details:', error instanceof Error ? error.message : String(error));
 
       // Ignore errors from stale requests
       if (thisRequestToken !== requestTokenRef.current) {
@@ -234,7 +239,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       setPersonalizedMagicText(null);
       toast({
         title: "Something went wrong",
-        description: "Please try again later.",
+        description: error instanceof Error ? error.message : "Please try again later.",
         variant: "destructive",
         duration: 3000,
       });
