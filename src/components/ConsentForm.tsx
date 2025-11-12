@@ -61,6 +61,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
     city: string;
   } | null>(null);
   const [isAutoDetecting, setIsAutoDetecting] = useState(false);
+  const [isEnvLoading, setIsEnvLoading] = useState(false);
   const [personalizedMagicText, setPersonalizedMagicText] = useState<string | null>(null);
   const [isLoadingMagicText, setIsLoadingMagicText] = useState(false);
   const [cachedProfileHash, setCachedProfileHash] = useState<string | null>(null);
@@ -115,8 +116,10 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
 
   // Check if environmental data is ready for personalization
   const isPersonalizationReady = useMemo(() => {
-    return !!(effectiveLocation && environmentalData);
-  }, [effectiveLocation, environmentalData]);
+    // Environmental data must be loaded, match current location, and not be currently loading
+    const envMatchesLocation = environmentalData?.city === effectiveLocation;
+    return !!(effectiveLocation && environmentalData && envMatchesLocation && !isEnvLoading);
+  }, [effectiveLocation, environmentalData, isEnvLoading]);
 
   // Check if user has added profile enhancements
   const hasProfileData = useMemo(() => {
@@ -352,12 +355,20 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             if (cityName !== lastGeocodedCity) {
               setLastGeocodedCity(cityName);
 
-              const envData = await fetchEnvironmentalData(coords);
-              setEnvironmentalData({
-                airQuality: envData.airQuality,
-                weather: envData.weather,
-                city: cityName,
-              });
+              // Set loading state before fetching environmental data
+              setIsEnvLoading(true);
+              
+              try {
+                const envData = await fetchEnvironmentalData(coords);
+                setEnvironmentalData({
+                  airQuality: envData.airQuality,
+                  weather: envData.weather,
+                  city: cityName,
+                });
+              } finally {
+                // Clear loading state after fetch completes (success or failure)
+                setIsEnvLoading(false);
+              }
             }
           }
 
@@ -391,6 +402,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
       }
 
       setIsAutoDetecting(true);
+      setIsEnvLoading(true);
 
       try {
         const location = await detectLocationFromIP();
@@ -431,6 +443,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         console.error('Auto-detection failed:', error);
       } finally {
         setIsAutoDetecting(false);
+        setIsEnvLoading(false);
       }
     }
 
@@ -874,13 +887,22 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-base text-customText/90 space-y-5 pt-3">
-                      {isLoadingMagicText ? (
+                      {isEnvLoading ? (
                         <div className="flex flex-col items-center justify-center py-12 space-y-5">
                           <div className="relative flex items-center justify-center">
                             <Loader2 className="w-12 h-12 animate-spin text-primary" />
                           </div>
                           <p className="text-base md:text-lg text-customText/70 animate-pulse text-center">
-                            Fetching fresh data for {effectiveLocation}...
+                            Fetching environmental data for {effectiveLocation}...
+                          </p>
+                        </div>
+                      ) : isLoadingMagicText ? (
+                        <div className="flex flex-col items-center justify-center py-12 space-y-5">
+                          <div className="relative flex items-center justify-center">
+                            <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                          </div>
+                          <p className="text-base md:text-lg text-customText/70 animate-pulse text-center">
+                            Creating personalized magic text...
                           </p>
                         </div>
                       ) : personalizedMagicText ? (

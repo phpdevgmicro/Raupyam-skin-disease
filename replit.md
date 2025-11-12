@@ -40,10 +40,13 @@ The application guides users through a multi-step process:
 
 **Consent Form Schema**: Validated with Zod, includes full name, age, gender, skin type, concerns, and complete address details (cityName, city, state, country).
 
-**Personalize Magic Request**: Sends minimal user data and environmental summaries:
-- **User Data**: `{ fullName, age, gender, skinType, topConcern, location: { city, state, country } }`
-- **Air Quality Summary**: `{ aqi, category, pm2_5, pm10 }` - Extracted from Google Air Quality pollutants array
-- **Weather Summary**: `{ temperatureValue, temperatureUnit, humidity, uvIndex }` - Extracted from weather conditions
+**Personalize Magic Request**: Sends structured payload with loading state protection:
+- **Payload Structure**: `{ userData, environmentData }` matching PHP backend expectations
+- **User Data**: `{ age, gender, skinType, topConcern }`
+- **Environment Data**: `{ city, aqi, aqiCategory, dominantPollutant, temperature, feelsLike, humidity, humidityCategory, uvIndex, windSpeed, weatherDesc, waterHardness, pm25, pm10, co, no2, so2, o3 }`
+- **Loading Gate**: `isEnvLoading` state flag prevents stale data - API calls blocked until environmental data finishes fetching for new location
+- **Pollutant Extraction**: Normalized code matching (lowercase, strip dots/underscores) handles Google API variations (pm2.5, PM2_5, pm25)
+- **Humidity Categories**: Low (0-40%), Medium (41-70%), High (71-100%) with null/undefined as "Medium"
 
 **Analysis Request**: Sends minimal structured data:
 - **Patient Data**: Complete user profile with coordinates

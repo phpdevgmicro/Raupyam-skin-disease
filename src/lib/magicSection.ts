@@ -1,62 +1,92 @@
 import type { ConsentFormData } from "@/types/schema";
 import type { AirQualityResponse, WeatherResponse } from "./googleApis";
-import type { AirQualitySummary, WeatherSummary, PersonalizeMagicRequest } from "./api";
+import type { PersonalizeMagicRequest, EnvironmentData } from "./api";
 
+/**
+ * Helper function to extract pollutant value from air quality response
+ * Normalizes codes by converting to lowercase and removing dots/underscores
+ */
+function extractPollutantValue(
+  pollutants: any[] | undefined,
+  code: string
+): number {
+  if (!pollutants || !Array.isArray(pollutants)) {
+    return 0;
+  }
+  
+  // Normalize the search code (lowercase, remove dots and underscores)
+  const normalizedCode = code.toLowerCase().replace(/[._]/g, '');
+  
+  const pollutant = pollutants.find((p: any) => {
+    if (!p.code) return false;
+    // Normalize the pollutant code the same way
+    const normalizedPollutantCode = p.code.toLowerCase().replace(/[._]/g, '');
+    return normalizedPollutantCode === normalizedCode;
+  });
+  
+  return pollutant?.concentration?.value ?? 0;
+}
+
+/**
+ * Helper function to categorize humidity level
+ * Treats only null/undefined as missing data, 0% is valid and maps to "Low"
+ */
+function categorizeHumidity(humidity: number | undefined | null): string {
+  // Only treat null/undefined as missing data (0 is a valid humidity value)
+  if (humidity === null || humidity === undefined) return "Medium";
+  
+  if (humidity <= 40) return "Low";
+  if (humidity <= 70) return "Medium";
+  return "High";
+}
+
+/**
+ * Format data for personalize magic API
+ * Builds payload matching backend expectations: { userData, environmentData }
+ * Only includes environment data if we have valid air quality and weather data
+ */
 export function formatPersonalizationData(
   formData: Partial<ConsentFormData>,
   city: string,
   airQuality: AirQualityResponse | null,
   weather: WeatherResponse | null
 ): PersonalizeMagicRequest {
-  // Extract minimal air quality data
-  let airQualitySummary: AirQualitySummary | null = null;
-  if (airQuality && airQuality.aqi && airQuality.category) {
-    // Extract PM2.5 and PM10 from pollutants array
-    let pm2_5: number | null = null;
-    let pm10: number | null = null;
-    
-    if (airQuality.pollutants && Array.isArray(airQuality.pollutants)) {
-      const pm25Pollutant = airQuality.pollutants.find((p: any) => p.code === 'pm2.5' || p.code === 'pm25');
-      const pm10Pollutant = airQuality.pollutants.find((p: any) => p.code === 'pm10');
-      
-      pm2_5 = pm25Pollutant?.concentration?.value ?? null;
-      pm10 = pm10Pollutant?.concentration?.value ?? null;
-    }
-    
-    airQualitySummary = {
-      aqi: airQuality.aqi,
-      category: airQuality.category,
-      pm2_5,
-      pm10,
-    };
-  }
+  // Build user data with only relevant fields (no location, no fullName)
+  const userData = {
+    age: formData.age,
+    gender: formData.gender,
+    skinType: formData.skinType,
+    topConcern: formData.topConcern,
+  };
   
-  // Extract minimal weather data
-  let weatherSummary: WeatherSummary | null = null;
-  if (weather && weather.temperature) {
-    weatherSummary = {
-      temperatureValue: weather.temperature.value,
-      temperatureUnit: weather.temperature.unit,
-      humidity: weather.humidity ?? null,
-      uvIndex: weather.uvIndex ?? null,
-    };
-  }
+  // Only build environment data if we have real data (not null/undefined)
+  const hasValidEnvData = !!(airQuality && weather && city);
+  
+  const environmentData: Partial<EnvironmentData> = hasValidEnvData ? {
+    city: city,
+    aqi: airQuality.aqi,
+    aqiCategory: airQuality.category,
+    dominantPollutant: airQuality.dominantPollutant ?? "Unknown",
+    temperature: weather.temperature?.value ?? 0,
+    feelsLike: weather.feelsLike ?? weather.temperature?.value ?? 0,
+    humidity: weather.humidity ?? 0,
+    humidityCategory: categorizeHumidity(weather.humidity),
+    uvIndex: weather.uvIndex ?? 0,
+    windSpeed: weather.windSpeed?.value ?? 0,
+    weatherDesc: weather.weatherDesc ?? "Clear",
+    waterHardness: "Medium minerals", // Placeholder - can be enhanced later
+    // Extract all 6 pollutants
+    pm25: extractPollutantValue(airQuality.pollutants, "pm25"),
+    pm10: extractPollutantValue(airQuality.pollutants, "pm10"),
+    co: extractPollutantValue(airQuality.pollutants, "co"),
+    no2: extractPollutantValue(airQuality.pollutants, "no2"),
+    so2: extractPollutantValue(airQuality.pollutants, "so2"),
+    o3: extractPollutantValue(airQuality.pollutants, "o3"),
+  } : {};
   
   return {
-    userData: {
-      fullName: formData.fullName,
-      age: formData.age,
-      gender: formData.gender,
-      skinType: formData.skinType,
-      topConcern: formData.topConcern,
-      location: {
-        city: formData.city,
-        state: formData.state,
-        country: formData.country,
-      },
-    },
-    airQuality: airQualitySummary,
-    weather: weatherSummary,
+    userData,
+    environmentData,
   };
 }
 

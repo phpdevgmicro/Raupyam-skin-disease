@@ -111,21 +111,35 @@ export interface WeatherSummary {
   uvIndex: number | null;
 }
 
+export interface EnvironmentData {
+  city: string;
+  aqi: number;
+  aqiCategory: string;
+  dominantPollutant: string;
+  temperature: number;
+  feelsLike: number;
+  humidity: number;
+  humidityCategory: string;
+  uvIndex: number;
+  windSpeed: number;
+  weatherDesc: string;
+  waterHardness: string;
+  pm25: number;
+  pm10: number;
+  co: number;
+  no2: number;
+  so2: number;
+  o3: number;
+}
+
 export interface PersonalizeMagicRequest {
   userData: {
-    fullName?: string;
     age?: number;
     gender?: string;
     skinType?: string;
     topConcern?: string[];
-    location?: {
-      city?: string;
-      state?: string;
-      country?: string;
-    };
   };
-  airQuality?: AirQualitySummary | null;
-  weather?: WeatherSummary | null;
+  environmentData: Partial<EnvironmentData>;
 }
 
 export interface PersonalizeMagicResponse {
