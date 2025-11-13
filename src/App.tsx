@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import SkinAnalysis from "@/pages/skin-analysis";
 import NotFound from "@/pages/not-found";
 
-const BASE_PATH = import.meta.env.PROD ? "/skin-disease" : "";
+const BASE_PATH = import.meta.env.PROD ? "/skin-analysis" : "";
 
 function AppRouter() {
   return (
