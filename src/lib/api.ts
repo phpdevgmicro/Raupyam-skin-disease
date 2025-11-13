@@ -161,24 +161,25 @@ export interface WeatherSummary {
 }
 
 export interface EnvironmentData {
-  city: string;
-  aqi: number;
-  aqiCategory: string;
-  dominantPollutant: string;
-  temperature: number;
-  feelsLike: number;
-  humidity: number;
-  humidityCategory: string;
-  uvIndex: number;
-  windSpeed: number;
-  weatherDesc: string;
-  waterHardness: string;
-  pm25: number;
-  pm10: number;
-  co: number;
-  no2: number;
-  so2: number;
-  o3: number;
+  city?: string;
+  aqi?: number;
+  aqiCategory?: string;
+  dominantPollutant?: string;
+  temperature?: number;
+  feelsLike?: number;
+  humidity?: number;
+  humidityCategory?: string;
+  uvIndex?: number;
+  windSpeed?: number;
+  weatherDesc?: string;
+  waterHardness?: string;
+  pm25?: number;
+  pm10?: number;
+  co?: number;
+  no2?: number;
+  so2?: number;
+  o3?: number;
+  nh3?: number;
 }
 
 export interface PersonalizeMagicRequest {
