@@ -90,7 +90,7 @@ export async function analyzeImages(images: string[]) {
   // This ensures age: 0 and empty topConcern arrays are not sent
   const userDetail = {
     fullName: patientData.fullName,
-    ...personalizationData.userData,  // This only includes valid age, gender, skinType, topConcern
+    ...personalizationData.userData,  // This includes age, gender, skinType, topConcern (only if valid)
     city: patientData.city,
     state: patientData.state,
     country: patientData.country,
@@ -99,12 +99,16 @@ export async function analyzeImages(images: string[]) {
   console.log('[Analysis API] Sending user detail:', JSON.stringify(userDetail, null, 2));
   console.log('[Analysis API] Air quality summary:', JSON.stringify(airQualitySummary, null, 2));
   console.log('[Analysis API] Weather summary:', JSON.stringify(weatherSummary, null, 2));
+  console.log('[Analysis API] Complete environment data:', JSON.stringify(personalizationData.environmentData, null, 2));
 
   const formData = new FormData();
   formData.append('image', image);
   formData.append('user_detail', JSON.stringify(userDetail));
+  // Send legacy format for backward compatibility
   formData.append('air_quality', JSON.stringify(airQualitySummary));
   formData.append('weather', JSON.stringify(weatherSummary));
+  // Also send complete environment data matching Personalize Magic format
+  formData.append('environment_data', JSON.stringify(personalizationData.environmentData));
 
   const response = await fetch(API_ENDPOINTS.analyze, {
     method: 'POST',

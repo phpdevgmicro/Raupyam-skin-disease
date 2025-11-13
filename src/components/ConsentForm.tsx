@@ -46,6 +46,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [citySelected, setCitySelected] = useState(!!initialData?.cityName);
+  const [addressSelected, setAddressSelected] = useState(!!initialData?.cityName);
+  const [autoDetectedCity, setAutoDetectedCity] = useState<string | null>(null);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(
     (initialData as any)?.coordinates || null
   );
@@ -395,6 +397,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
           }
 
           setCitySelected(true);
+          setAddressSelected(true);
         }
       });
     }
@@ -415,6 +418,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
         form.setValue("country", savedAutoLocation.country, { shouldValidate: false });
         setCoordinates(savedAutoLocation.coordinates);
         setCitySelected(true);
+        setAddressSelected(true);
+        setAutoDetectedCity(savedAutoLocation.city);
         setEnvironmentalData({
           airQuality: savedAutoLocation.airQuality,
           weather: savedAutoLocation.weather,
@@ -455,6 +460,8 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
           form.setValue("country", location.country, { shouldValidate: false });
           setCoordinates(coords);
           setCitySelected(true);
+          setAddressSelected(true);
+          setAutoDetectedCity(location.city);
           setEnvironmentalData({
             airQuality: envData.airQuality,
             weather: envData.weather,
@@ -473,6 +480,21 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
   }, [form, initialData]);
 
   const handleFormSubmit = async (data: ConsentFormData) => {
+    // Validate that user selected from Google autocomplete, not just typed manually
+    if (!addressSelected) {
+      form.setError("cityName", {
+        type: "manual",
+        message: "Please select from the dropdown suggestions"
+      });
+      toast({
+        title: "Please select your city",
+        description: "Start typing your city name and select it from the dropdown suggestions that appear. Don't just type it manually.",
+        variant: "destructive",
+        duration: 6000,
+      });
+      return;
+    }
+    
     // Validate that location fields are not empty
     if (!data.cityName || !data.city || !data.state || !data.country) {
       form.setError("cityName", {
@@ -856,6 +878,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                       ref={cityInputRef}
                       onChange={(e) => {
                         field.onChange(e);
+                        setAddressSelected(false);
                         handleFormFieldChange();
                       }}
                     />
@@ -866,7 +889,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             />
 
             {/* Auto-detected Location Message */}
-            {environmentalData && environmentalData.city && (
+            {environmentalData && environmentalData.city && autoDetectedCity && cityName === autoDetectedCity && (
               <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-primary mt-[.12rem] flex-shrink-0" />
@@ -939,6 +962,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                             Something went wrong. Please try again.
                           </p>
                           <Button
+                            type="button"
                             onClick={() => setRetryRequested(true)}
                             variant="outline"
                             size="sm"
