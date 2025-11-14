@@ -889,13 +889,19 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
             />
 
             {/* Auto-detected Location Message */}
-            {environmentalData && environmentalData.city && autoDetectedCity && cityName === autoDetectedCity && (
-              <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+            {((environmentalData && environmentalData.city && autoDetectedCity) || isEnvLoading) && (
+              <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg animate-in fade-in duration-300">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-primary mt-[.12rem] flex-shrink-0" />
                   <p className="text-sm text-customText line-height-less">
-                    <span className="font-semibold">We grabbed {environmentalData.city}</span>
-                    {environmentalData.airQuality?.aqi !== undefined && environmentalData.airQuality?.aqi !== null && (
+                    <span className="font-semibold">
+                      We grabbed {isEnvLoading ? (
+                        <span className="inline-block h-5 w-24 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 dark:from-primary/10 dark:via-primary/20 dark:to-primary/10 animate-pulse rounded align-middle" />
+                      ) : (
+                        <span className="animate-in fade-in duration-300">{environmentalData?.city}</span>
+                      )}
+                    </span>
+                    {!isEnvLoading && environmentalData?.airQuality?.aqi !== undefined && environmentalData.airQuality?.aqi !== null && (
                       <>
                         —its AQI{' '}
                         <span className="font-semibold">{environmentalData.airQuality.aqi}</span>
@@ -905,7 +911,7 @@ export default function ConsentForm({ onSubmit, initialData }: ConsentFormProps)
                         {' '}means extra anti-pollution shields in your mix.
                       </>
                     )}
-                    {environmentalData.weather?.humidity !== undefined && environmentalData.weather?.humidity !== null && (
+                    {!isEnvLoading && environmentalData?.weather?.humidity !== undefined && environmentalData.weather?.humidity !== null && (
                       <>
                         {' '}
                         {environmentalData.weather.humidity > 70
